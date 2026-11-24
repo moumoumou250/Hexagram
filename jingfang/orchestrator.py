@@ -6,9 +6,14 @@ import sqlite3
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
+from .audit import audit_claims
+from .forces import build_windows, forces, sanhe_scan
+from .interpretation import apply_rules_fired, load_config
 from .journal import Journal
 from .report import render, validate
-from .review import facts, flagged_items, focus_choice, normalize_entries, words
+from .review import (
+    facts, flagged_items, focus_choice, normalize_entries, outcome_choice, verdict_choice, words,
+)
 from .rule_data import CHART_FIELDS, SKILL_PATHS, RuleData, chart_fields, freeze_rules, rule_source
 
 STEPS = {
@@ -23,18 +28,17 @@ FACT_LABELS = {
     "chart": "固定盘和变卦独立复算", "moves": "动爻与同位变爻",
     "calendar": "月建、日辰、旬空和六神查表", "relations": "月令旺衰与日月作用",
     "roles": "六亲、五行及用神对应关系", "timing": "冲合值及生旺墓绝候选",
+    "forces": "用神元忌的力量判定", "sanhe": "三合虚实扫描", "windows": "应期窗口与通道置信度",
 }
 STATES = {"pending", "accepted", "partial", "blocked", "skipped"}
 TOPICS = {
     "identify": (),
-    "focus": ("chart", "roles", "calendar", "moves", "relations"),
-    "strength": ("chart", "calendar", "relations", "moves"),
-    "change": ("chart", "calendar", "relations", "moves"),
-    "timing": ("chart", "calendar", "relations", "moves", "timing"),
-    "synthesis": ("chart", "calendar"),
+    "focus": ("chart", "roles", "calendar", "moves", "relations", "sanhe"),
+    "strength": ("chart", "calendar", "relations", "moves", "forces", "sanhe"),
+    "change": ("chart", "calendar", "relations", "moves", "forces"),
+    "timing": ("chart", "calendar", "relations", "moves", "timing", "forces", "sanhe"),
+    "synthesis": ("chart", "calendar", "forces", "windows", "sanhe"),
 }
-
-
 def reading_input(payload):
     if not isinstance(payload, dict):
         raise ValueError("解卦输入应为 JSON 对象")
@@ -44,6 +48,9 @@ def reading_input(payload):
     normalized = chart_fields(payload)
     for name in ("question", "source"):
         normalized[name] = words(payload.get(name), name)
+    core = re.sub(r"[^\w\u4e00-\u9fff]+", "", normalized["question"], flags=re.UNICODE)
+    if len(core) < 6:
+        raise ValueError("问题过短：请写明核心事项与所求结果（去掉标点后至少 6 字）")
     for name in ("cast_time", "timezone"):
         if payload.get(name) is not None:
             normalized[name] = words(payload[name], name)
@@ -56,7 +63,6 @@ def reading_input(payload):
         raise ValueError("comparison_targets 应为对象名称数组")
     normalized["comparison_targets"] = list(dict.fromkeys(words(value, "比较对象") for value in targets))
     return normalized
-
 
 
 def next_step(steps):
@@ -108,7 +114,8 @@ class Orchestrator:
             "id": run_id, "input": data, "revision": 1, "rule_version": freeze_rules(self.directory),
             "created_at": now.isoformat(timespec="seconds"),
             "steps": {step: {"state": "pending"} for step in STEPS},
-            "entries": [], "focus": None, "history": [], "last_entry": 0,
+            "entries": [], "focus": None, "verdict": None, "interpretation": None,
+            "outcomes": [], "force_overrides": {}, "history": [], "last_entry": 0,
         }
         self._save(path, run)
         return self._status(path, run)
@@ -119,6 +126,8 @@ class Orchestrator:
         if (not isinstance(steps, dict) or set(steps) != set(STEPS)
                 or any(not isinstance(item, dict) or item.get("state") not in STATES for item in steps.values())):
             raise ValueError("记录的解卦步骤状态无效")
+        run.setdefault("outcomes", [])
+        run.setdefault("force_overrides", {})
         terminal = next_step(steps)
         if terminal is None:
             terminal = next((step for step in STEPS if steps[step]["state"] == "blocked"), None)
@@ -158,11 +167,12 @@ class Orchestrator:
                 "skill_file": str(version_path / SKILL_PATHS[step]) if step in SKILL_PATHS else None,
                 "entries": [entry for entry in run["entries"]
                             if entry["kind"] != "fact" or entry["topic"] in TOPICS[step]],
-                "focus": run["focus"]}
+                "focus": run["focus"], "verdict": run.get("verdict")}
         if step == "timing":
             info["skip_reason"] = timing_issue(run, evidence)
         if step == "synthesis":
-            info["checks"] = flagged_items(evidence, run["focus"], ())
+            info["checks"] = flagged_items(evidence, run["focus"], (), run)
+            info["claims"] = audit_claims(run)
         return info
 
     def submit(self, run_id, step, payload):
@@ -180,6 +190,14 @@ class Orchestrator:
             self._apply(run, step, payload, signature)
             self._save(path, run)
             return self._status(path, run)
+
+    def outcome(self, run_id, payload):
+        with self.journal.writer(run_id):
+            path, run = self._load(run_id)
+            record = outcome_choice(payload, run)
+            run.setdefault("outcomes", []).append(record)
+            self._save(path, run)
+            return dict(self._status(path, run), outcome=record, outcomes=len(run["outcomes"]))
 
     def _apply(self, run, step, payload, signature):
         entries = run["entries"]
@@ -233,6 +251,10 @@ class Orchestrator:
                         evidence["chart"]["transcription"] = interpreted
                     for topic, data in evidence.items():
                         generated.append(add("fact", topic, FACT_LABELS[topic], data))
+                    if "chart" in evidence:
+                        sanhe = sanhe_scan(evidence)
+                        evidence["sanhe"] = sanhe
+                        generated.append(add("fact", "sanhe", FACT_LABELS["sanhe"], sanhe, generated[:1]))
                     if conflicts or missing:
                         state = "blocked"
                         reason = "；".join([*conflicts, *(f"缺少{field}" for field in missing)])
@@ -246,16 +268,48 @@ class Orchestrator:
                     state, reason = "partial", "月建或完整日辰缺失，保留可确认的旺衰依据"
             if step == "focus":
                 run["focus"] = focus_choice(payload.get("focus"), evidence, state)
+                if run["focus"] and run["focus"].get("primary"):
+                    detail = forces(evidence, run["focus"], run.get("force_overrides"))
+                    evidence["forces"] = detail
+                    generated.append(add("fact", "forces", FACT_LABELS["forces"], detail))
 
             visible = [entry for entry in entries if entry["step"] != step]
             if step == "identify" and state == "blocked":
                 findings = []
             else:
                 findings = normalize_entries(payload, step, sources, visible, evidence, generated)
+            for _, _, _, detail, _ in findings:
+                if detail.get("force_override") is not None:
+                    run.setdefault("force_overrides", {})[detail["position"]] = {
+                        "force": detail["force_override"],
+                        "override_reason": detail["override_reason"],
+                    }
+            if step in ("strength", "change") and run.get("force_overrides") and evidence.get("forces"):
+                # refresh forces fact textually by appending a note fact only when overrides change
+                refreshed = forces(evidence, run["focus"], run["force_overrides"])
+                evidence["forces"] = refreshed
+                for entry in entries:
+                    if entry["kind"] == "fact" and entry["topic"] == "forces":
+                        entry["detail"] = refreshed
             judgments = [item for item in findings if item[0] == "judgment"]
             self._check_findings(run, step, state, skill_use, evidence, judgments)
+            if step == "synthesis":
+                prior_ids = {entry["id"] for entry in entries if entry["kind"] == "judgment"}
+                # synthesis findings not yet assigned ids; layers may only ref prior judgments
+                run["verdict"] = verdict_choice(payload.get("verdict"), prior_ids, state, run.get("verdict"))
+                if "rules_fired" in payload:
+                    blocks = apply_rules_fired(payload.get("rules_fired"), evidence, run.get("focus"))
+                    run["interpretation"] = {
+                        "config_version": load_config().get("config_version", "1.0"),
+                        "preset_blocks": blocks,
+                    }
             for kind, topic, summary, detail, refs in findings:
                 add(kind, topic, summary, detail, refs)
+            if step == "timing" and state == "accepted":
+                window_findings = [item for item in findings if item[1] == "window"]
+                detail = build_windows(window_findings, run["input"].get("cast_time"))
+                evidence["windows"] = detail
+                add("fact", "windows", FACT_LABELS["windows"], detail)
             if state != "accepted" and step != "identify":
                 add("pending", step, reason, {})
 
@@ -271,6 +325,10 @@ class Orchestrator:
             reported = {detail["position"] for _, topic, _, detail, _ in judgments if topic == "moving_line"}
             if reported != set(evidence.get("moves", {}).get("moving_positions", ())):
                 raise ValueError("完成动变应记录每个明动爻及其作用")
+        if step == "timing" and state == "accepted" and run["input"]["ask_timing"]:
+            windows = [item for item in judgments if item[1] == "window"]
+            if not windows:
+                raise ValueError("完成应期需至少一条 topic 为 window 的通道记录")
         conclusions = [item for item in judgments if item[1] in ("conclusion", "comparison")]
         if step == "synthesis" and state == "accepted" and not conclusions:
             raise ValueError("汇总应提交带 conclusion 或 comparison 主题的主结论")
@@ -302,7 +360,8 @@ class Orchestrator:
             run["history"].append({"revision": run["revision"], "input": run["input"], "reason": reason,
                                    "steps": {step: result["state"] for step, result in run["steps"].items()},
                                    "findings": [entry["summary"] for entry in run["entries"] if entry["kind"] != "fact"]})
-            run.update(input=data, revision=run["revision"] + 1, focus=None, entries=[],
+            run.update(input=data, revision=run["revision"] + 1, focus=None, verdict=None,
+                       interpretation=None, force_overrides={}, entries=[],
                        steps={step: {"state": "pending"} for step in STEPS})
             self._save(path, run)
             return self._status(path, run)
@@ -310,18 +369,51 @@ class Orchestrator:
     def _save(self, path, run):
         self.journal.save(path, run, render(run, self._status(path, run)))
 
-    def export_html(self, run_id):
+    def export_html(self, run_id, allow_claims=False):
         from .view import reading_page
         from .save_reading_log import save_markdown
 
         with self.journal.writer(run_id):
             path, run = self._load(run_id)
             validate(run, self.directory)
+            claims = audit_claims(run)
+            if claims["conflicts"] and not allow_claims:
+                raise ValueError(
+                    "判断摘要含盘面断言冲突，拒绝导出 HTML。"
+                    f"冲突 {len(claims['conflicts'])} 条；可用 --allow-claims 强制导出"
+                )
             status = self._status(path, run)
             sql = rule_source(self.directory, run["rule_version"])["gua.sql"].decode("utf-8-sig")
             destination = path.parent / "html" / path.with_suffix(".html").name
             save_markdown(reading_page(run, status, sql), destination)
-            return {"run_id": run_id, "state": status["state"], "path": str(destination)}
+            return {"run_id": run_id, "state": status["state"], "path": str(destination),
+                    "claims": claims}
+
+    def dump(self, run_id, step=None, *, include_detail=True):
+        from .dump import build_dump, render_text
+
+        path, run = self._load(run_id)
+        payload = build_dump(run, step=step, include_detail=include_detail)
+        return {
+            "run_id": run_id,
+            "path": str(path),
+            "state": payload["state"],
+            "text": render_text(payload),
+            "dump": payload,
+        }
+
+    def dump_html(self, run_id, step=None):
+        from .dump import build_dump, write_html
+
+        path, run = self._load(run_id)
+        payload = build_dump(run, step=step, include_detail=True)
+        destination = write_html(payload, path)
+        return {
+            "run_id": run_id,
+            "state": payload["state"],
+            "path": str(destination),
+            "markdown_path": str(path),
+        }
 
     def validate(self, run_id):
         path, run = self._load(run_id)

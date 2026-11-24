@@ -1,0 +1,177 @@
+{
+  "version": "1.0",
+  "forbidden_matter_terms": [
+    "升职", "获聘", "录取", "复合", "分手", "结婚", "病愈", "痊愈", "得财", "发财",
+    "一定", "必成", "必败", "会失败", "会成功", "对方会", "这件事会"
+  ],
+  "rules": [
+    {
+      "id": "R01",
+      "status": "fixed",
+      "source": "四时旺相章",
+      "enabled": true,
+      "trigger": "month_strength",
+      "template": "{who}在月令里是{state}。{gloss}"
+    },
+    {
+      "id": "R02",
+      "status": "fixed",
+      "source": "月破章",
+      "enabled": true,
+      "trigger": "month_break",
+      "template": "{who}被月建冲掉（月破）。{how}"
+    },
+    {
+      "id": "R03",
+      "status": "fixed",
+      "source": "月破章",
+      "enabled": false,
+      "trigger": "manual",
+      "template": "{who}虽与月建同五行，仍按月破看，不按旺看。"
+    },
+    {
+      "id": "R04",
+      "status": "fixed",
+      "source": "日辰章",
+      "enabled": true,
+      "trigger": "day_lifts_month_break",
+      "template": "{who}临着日辰。月破这层可以先放松看。"
+    },
+    {
+      "id": "R05",
+      "status": "heuristic",
+      "source": "日辰章、暗动章",
+      "enabled": true,
+      "trigger": "day_chong_static",
+      "template": "{who}安静却被日冲。{how}"
+    },
+    {
+      "id": "R06",
+      "status": "fixed",
+      "source": "动散章",
+      "enabled": true,
+      "trigger": "moving_day_chong",
+      "template": "{who}在动，又被日冲。按「动爻不因日冲而散」看。"
+    },
+    {
+      "id": "R07",
+      "status": "heuristic",
+      "source": "旬空章",
+      "enabled": true,
+      "trigger": "void",
+      "template": "{who}落在旬空（这旬轮空）。{how}"
+    },
+    {
+      "id": "R08",
+      "status": "fixed",
+      "source": "生旺墓绝章",
+      "enabled": true,
+      "trigger": "stage",
+      "template": "{who}在{actor}上见到{stage}。本系统只用长生、帝旺、墓、绝四位。"
+    },
+    {
+      "id": "R09",
+      "status": "fixed",
+      "source": "生旺墓绝章",
+      "enabled": false,
+      "trigger": "manual",
+      "template": "{who}虽见绝或墓，但若本身旺，先按能生看，不先按死绝看。"
+    },
+    {
+      "id": "R10",
+      "status": "fixed",
+      "source": "动变生克冲合章",
+      "enabled": true,
+      "trigger": "has_moves",
+      "template": "变爻主要管自己本位的动爻，不去直接管别的爻。只有月、日能管到变爻。"
+    },
+    {
+      "id": "R11",
+      "status": "fixed",
+      "source": "题头总注章",
+      "enabled": true,
+      "trigger": "change_effect",
+      "template": "{who}动而化出：{effect}。"
+    },
+    {
+      "id": "R12",
+      "status": "fixed",
+      "source": "六冲章",
+      "enabled": false,
+      "trigger": "manual",
+      "template": "{who}化回头冲。回头冲不等于回头克，还要看五行。"
+    },
+    {
+      "id": "R13",
+      "status": "fixed",
+      "source": "进神退神章",
+      "enabled": true,
+      "trigger": "jin_tui",
+      "template": "{who}查表为{kind}。只认书中七对；表外不作进神。"
+    },
+    {
+      "id": "R14",
+      "status": "fixed",
+      "source": "元神忌神衰旺章",
+      "enabled": true,
+      "trigger": "forces_role",
+      "template": "{who}现在{how}。因为{reason}。"
+    },
+    {
+      "id": "R15",
+      "status": "fixed",
+      "source": "元神忌神衰旺章",
+      "enabled": true,
+      "trigger": "rooted",
+      "template": "{text}"
+    },
+    {
+      "id": "R16",
+      "status": "contested",
+      "source": "元神忌神衰旺章",
+      "enabled": false,
+      "trigger": "manual",
+      "template": "原神和忌神一起动，力量接着传。暂不把原神判成没用。【需核对】"
+    },
+    {
+      "id": "R17",
+      "status": "fixed",
+      "source": "三刑章",
+      "enabled": false,
+      "trigger": "manual",
+      "template": "三刑很少单独应验。只有用神休囚又另有克害时，才附带参考。"
+    },
+    {
+      "id": "R18",
+      "status": "fixed",
+      "source": "卦变生克墓绝章",
+      "enabled": false,
+      "trigger": "manual",
+      "template": "整卦化克时，书中常先按偏凶看；化生则偏吉。本页仍只落到用神上说。"
+    },
+    {
+      "id": "R19",
+      "status": "fixed",
+      "source": "动变生克冲合章",
+      "enabled": true,
+      "trigger": "multi_movers",
+      "template": "本卦{a}与{b}同动：{relation}。"
+    },
+    {
+      "id": "X01",
+      "status": "fixed",
+      "source": "飞伏神章",
+      "enabled": true,
+      "trigger": "always_once",
+      "template": "互卦、天干合化：不用来找用神。"
+    },
+    {
+      "id": "X02",
+      "status": "fixed",
+      "source": "六神章",
+      "enabled": true,
+      "trigger": "always_once",
+      "template": "六神只当形容词，不单独定用神强弱。"
+    }
+  ]
+}

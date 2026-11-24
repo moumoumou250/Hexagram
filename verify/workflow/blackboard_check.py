@@ -81,8 +81,18 @@ class SequentialChecks(unittest.TestCase):
     def finish(self, run):
         context = self.context(run, "synthesis")
         refs = [entry["id"] for entry in context["entries"] if entry["kind"] == "judgment"]
+        layer_refs = refs[:1]
+        verdict = {
+            "direction": "favorable",
+            "layers": [{
+                "name": "事项可成", "condition": "用神得生无破",
+                "status": "waiting", "refs": layer_refs,
+            }],
+            "falsifier": "若三个月内所问事项全无实质进展，则本次偏吉判断不成立",
+        }
         return self.submit(run, "synthesis", [judgment(refs, "所问事项的汇总判断",
-                                                       skill="strength", topic="conclusion")])
+                                                       skill="strength", topic="conclusion")],
+                           verdict=verdict)
 
     def test_career_chart_saves_each_step_to_same_markdown(self):
         career = fixture(base_name="雷风恒", line_code="011100", moving_positions=[3, 4, 5, 6],
@@ -173,14 +183,29 @@ class SequentialChecks(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "当前应执行 timing"):
             self.submit(run, "synthesis")
         timing = self.fact(context, "timing")["id"]
-        self.submit(run, "timing", [judgment([timing], "以值合为应期候选")])
+        with self.assertRaisesRegex(ValueError, "window"):
+            self.submit(run, "timing", [judgment([timing], "以值合为应期候选")])
+        self.submit(run, "timing", [judgment(
+            [timing], "以值合为应期候选", topic="window", branch="申", unit="日", channel="值"
+        )])
         self.assertIn("以值合为应期候选", path.read_text(encoding="utf-8"))
         context = self.context(run, "synthesis")
         refs = [entry["id"] for entry in context["entries"]
                 if entry["kind"] == "judgment" and entry["step"] in ("change", "strength")]
         with self.assertRaisesRegex(ValueError, "引用已完成"):
-            self.submit(run, "synthesis", [judgment(refs, skill="strength", topic="conclusion")])
+            self.submit(run, "synthesis", [judgment(refs, skill="strength", topic="conclusion")],
+                        verdict={"direction": "favorable", "layers": [{
+                            "name": "事项可成", "condition": "用神得生", "status": "waiting",
+                            "refs": refs[:1],
+                        }], "falsifier": "若三个月内所问事项全无实质进展则判断不成立"})
         self.assertEqual(self.finish(run)["state"], "complete")
+        outcome = self.service.outcome(run, {
+            "checked_at": "2027-03-15", "result": "partial",
+            "layers": [{"name": "事项可成", "status": "met", "evidence": "三月内岗位有实质推进"}],
+            "note": "其余层未发生",
+        })
+        self.assertEqual(outcome["outcomes"], 1)
+        self.assertIn("应验与复盘", path.read_text(encoding="utf-8"))
 
     def test_missing_day_stem_is_partial_and_does_not_block_summary(self):
         run, path = self.start(fixture(day_ganzhi=None, day_branch="申"))

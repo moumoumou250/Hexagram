@@ -3,74 +3,101 @@
 import json
 import re
 import sqlite3
+from contextlib import closing
 
 from .review import facts, rows
 from .report import STATUS
 from .rule_data import ROOT
 
 
-def build_data(sql):
-    with sqlite3.connect(":memory:") as database:
+def build_data(sql, reading):
+    if not reading["id"]:
+        return {}
+
+    with closing(sqlite3.connect(":memory:")) as database:
         database.row_factory = sqlite3.Row
         database.executescript(sql)
 
-        def query(sql):
-            return map(dict, database.execute(sql))
+        def query(statement, *params):
+            return [dict(row) for row in database.execute(statement, params)]
 
-        charts = {row["hexagram_id"]: dict(row, lines=[]) for row in query(
-            "SELECT * FROM hexagrams ORDER BY hexagram_id"
-        )}
-        for line in query("SELECT * FROM hexagram_board ORDER BY hexagram_id, position"):
-            charts[line.pop("hexagram_id")]["lines"].append(line)
+        def chart(hexagram_id):
+            data, = query("SELECT * FROM hexagrams WHERE hexagram_id = ?", hexagram_id)
+            return dict(data, lines=query(
+                "SELECT position, polarity, line_title, stem, branch, element, relative, shi_ying, "
+                "hidden_stem, hidden_branch, hidden_element, hidden_relative "
+                "FROM hexagram_board WHERE hexagram_id = ? ORDER BY position", hexagram_id,
+            ))
 
-        transitions = {}
-        for row in query(
-            "SELECT base_id, move_mask, changed_id, relation_change, "
-            "inner_fanfu, outer_fanfu, gua_change, gua_fanyin FROM hexagram_change"
-        ):
-            key = f"{row.pop('base_id')}:{row.pop('move_mask')}"
-            transitions[key] = dict(row, lines={})
+        base_id, mask = reading["id"], reading["mask"]
+        base = chart(base_id)
+        changed = None
+        moving = {}
+        if mask:
+            transition, = query("SELECT changed_id FROM hexagram_change WHERE base_id = ? AND move_mask = ?",
+                                base_id, mask)
+            changed = chart(transition["changed_id"])
+            moving = {row["position"]: row["changed_relative"] for row in query(
+                "SELECT position, changed_relative FROM change_board WHERE base_id = ? AND move_mask = ?",
+                base_id, mask,
+            )}
 
-        for row in query(
-            "SELECT base_id, move_mask, position, changed_relative, huitou, "
-            "hua_chong, hua_he, jin_tui, hua_stage, line_fanfu, fuyin_line FROM change_board"
-        ):
-            key = f"{row.pop('base_id')}:{row.pop('move_mask')}"
-            position = row.pop("position")
-            transitions[key]["lines"][position] = {
-                field: value for field, value in row.items() if value
-            }
+        day = next(iter(query("SELECT branch, kong_1, kong_2 FROM jiazi WHERE ganzhi = ?", reading["day"])), None)
+        month = reading["month"]
+        day_branch = day["branch"] if day else reading.get("dayBranch")
+        actors = sorted({branch for branch in (month, day_branch) if branch})
+        targets = set(actors)
+        elements = {choice["element"] for choice in (*reading.get("candidates", ()), reading.get("primary")) if choice}
+        for line in base["lines"]:
+            targets.update((line["branch"], line["hidden_branch"]))
+            elements.update((line["element"], line["hidden_element"]))
+        if changed:
+            for position in moving:
+                line = changed["lines"][position - 1]
+                targets.add(line["branch"])
+                elements.add(line["element"])
+
+        interactions = {row["actor"] + row["target"]: row for actor in actors for row in query(
+            "SELECT actor, target, wuxing, same_branch, chong, he, target_stage "
+            "FROM branch_interaction WHERE actor = ?", actor,
+        ) if row["target"] in targets}
 
         return {
-            "charts": charts,
-            "transitions": transitions,
-            "branches": [row["branch"] for row in query("SELECT branch FROM dizhi ORDER BY seq")],
-            "days": {row["ganzhi"]: row for row in query("SELECT * FROM jiazi ORDER BY seq")},
-            "spirits": {f"{row['day_stem']}{row['position']}": row["spirit"]
-                        for row in query("SELECT * FROM liushen")},
-            "interactions": {row["actor"] + row["target"]: row
-                             for row in query("SELECT * FROM branch_interaction")},
-            "elements": {row["subject"] + row["object"]: row["relation"]
-                         for row in query("SELECT * FROM wuxing_relation")},
-            "strength": {row["month_branch"] + row["element"]: row["state"]
-                         for row in query("SELECT * FROM month_strength")},
-            "roles": {row["yongshen"]: row for row in query("SELECT * FROM yongshen_roles")},
+            "base": base, "changed": changed, "moving": moving, "day": day, "interactions": interactions,
+            "strength": {row["element"]: row["state"] for row in query(
+                "SELECT element, state FROM month_strength WHERE month_branch = ?", month,
+            ) if row["element"] in elements},
+            "roles": next(iter(query("SELECT yuanshen, jishen, choushen FROM yongshen_roles WHERE yongshen = ?",
+                                     reading["role"])), None),
         }
 
 
-def embed_data(document, data):
+def embed_data(document, script_id, data):
     payload = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
     document, matches = re.subn(
-        r'(<script id="chart-data" type="application/json">)[^<]*(</script>)',
+        rf'(<script id="{script_id}" type="application/json">)[^<]*(</script>)',
         lambda match: match[1] + payload + match[2],
         document,
     )
     if matches != 1:
-        raise ValueError("Expected one embedded chart-data block")
+        raise ValueError(f"模板缺少唯一的 {script_id} 数据块")
     return document
 
 
+def render_page(reading, sql):
+    page = (ROOT / "templates" / "hexagram-view.html").read_text(encoding="utf-8")
+    return embed_data(embed_data(page, "reading-data", reading), "chart-data", build_data(sql, reading))
+
+
+DISCLAIMER = (
+    "本页只分析用神及相关爻的力量与条件，不对所问具体事情作结果预言，以免误导。"
+    "依据《增删卜易》体例与本次盘面资料，仅供参考；应期只给通道，不给保证。"
+)
+
+
 def reading_page(run, status, sql):
+    from .interpretation import build_interpretation
+
     evidence = facts(run["entries"])
     chart = evidence.get("chart", {})
     calendar = evidence.get("calendar", {})
@@ -81,6 +108,12 @@ def reading_page(run, status, sql):
     pending = [entry["summary"] for entry in run["entries"] if entry["kind"] == "pending"]
     pending.extend(step["reason"] for step in run["steps"].values()
                    if step["state"] in ("partial", "blocked") and step.get("reason"))
+    verdict = run.get("verdict") or {}
+    actions = []
+    for layer in verdict.get("layers") or ():
+        if layer.get("status") == "waiting":
+            actions.append(f"等候「{layer['name']}」：{layer.get('condition', '')}")
+    interpretation = build_interpretation(run, evidence)
     reading = {
         "id": str(boards[0]["hexagram_id"]) if verified else "",
         "question": run["input"]["question"], "source": run["input"]["source"],
@@ -90,15 +123,15 @@ def reading_page(run, status, sql):
         "baseName": chart.get("base_name") or run["input"].get("base_name", ""),
         "mask": chart.get("move_mask") if verified else None,
         "role": focus.get("relative", ""), "primary": focus.get("primary"),
+        "candidates": focus.get("candidates", []) if not focus.get("primary") else [],
         "status": STATUS[status["state"]], "pending": list(dict.fromkeys(pending)),
         "summary": " ".join(e["summary"] for e in judgments if e["step"] == "synthesis"
                             and e["topic"] in ("comparison", "conclusion")) or "尚无汇总结论。",
         "notes": [{"step": e["step"], "text": e["summary"]} for e in judgments
                   if e["step"] in ("focus", "change", "strength", "timing")],
+        "actions": actions,
+        "disclaimer": DISCLAIMER,
+        "falsifier": verdict.get("falsifier") or "",
+        "interpretation": interpretation,
     }
-    page = (ROOT / "templates" / "hexagram-view.html").read_text(encoding="utf-8")
-    marker = '<script type="application/json" id="reading-data">null</script>'
-    if page.count(marker) != 1:
-        raise ValueError("模板缺少唯一的 reading-data 插入位置")
-    payload = json.dumps(reading, ensure_ascii=False).replace("<", r"\u003c")
-    return embed_data(page, build_data(sql)).replace(marker, marker.replace("null", payload))
+    return render_page(reading, sql)

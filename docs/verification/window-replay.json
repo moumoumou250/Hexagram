@@ -1,0 +1,491 @@
+{
+  "count": 30,
+  "rows": [
+    {
+      "id": 1,
+      "question": "占父近病",
+      "outcome": "丑日（冲去未土）起床",
+      "experience": "两现取临月建之旺爻；动化合则被合绊不能生；应期取冲开合神之日",
+      "windows": [
+        {
+          "branch": "丑",
+          "unit": "日",
+          "channel": "冲",
+          "span": "丑日"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 2,
+      "question": "求财",
+      "outcome": "寅日见财",
+      "experience": "动爻不以日冲论散；化空待出空之日；空破不等于无",
+      "windows": [
+        {
+          "branch": "寅",
+          "unit": "日",
+          "channel": "冲",
+          "span": "寅日"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 3,
+      "question": "自占病",
+      "outcome": "卒于癸卯日（冲去元神酉金）",
+      "experience": "用神无根（月破又受日克）时，原神有力亦难生；凶期在冲去原神之日",
+      "windows": [
+        {
+          "branch": "卯",
+          "unit": "日",
+          "channel": "冲",
+          "span": "癸卯日"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 7,
+      "question": "弟病临危",
+      "outcome": "本日酉时遇医救活，己亥日痊愈",
+      "experience": "克少生多为吉",
+      "windows": [
+        {
+          "branch": "亥",
+          "unit": "日",
+          "channel": "值",
+          "span": "己亥日"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 8,
+      "question": "求财",
+      "outcome": "甲寅日得财",
+      "experience": "临月建亦论旬空（野鹤不取“逢空不空”），出空之日应",
+      "windows": [
+        {
+          "branch": "寅",
+          "unit": "日",
+          "channel": "填实",
+          "span": "甲寅日"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 9,
+      "question": "谒贵",
+      "outcome": "丙子日得见",
+      "experience": "逢伤亦伤，待冲去伤爻之日",
+      "windows": [
+        {
+          "branch": "子",
+          "unit": "日",
+          "channel": "冲",
+          "span": "丙子日"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 10,
+      "question": "升迁",
+      "outcome": "三月（辰土出空之月）升任",
+      "experience": "日冲克而得合局生扶无害；应期取局中空爻出空之月",
+      "windows": [
+        {
+          "branch": "辰",
+          "unit": "月",
+          "channel": "冲",
+          "span": "三月"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 11,
+      "question": "弟被讼吉凶",
+      "outcome": "本年下狱，申年重刑",
+      "experience": "月建入卦动作忌神祸深；退神应在退尽之时",
+      "windows": [
+        {
+          "branch": "申",
+          "unit": "年",
+          "channel": "值",
+          "span": "申年"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 12,
+      "question": "开铺面",
+      "outcome": "六月得病，八月伙计盗尽",
+      "experience": "当时旺相，过时有害；应期取用神之墓（木墓于未）",
+      "windows": [
+        {
+          "branch": "未",
+          "unit": "月",
+          "channel": "值",
+          "span": "六月"
+        },
+        {
+          "branch": "酉",
+          "unit": "月",
+          "channel": "值",
+          "span": "八月"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 14,
+      "question": "占病",
+      "outcome": "卒于亥月",
+      "experience": "临日辰亦难敌回头克；应期取克神当令之月",
+      "windows": [
+        {
+          "branch": "亥",
+          "unit": "月",
+          "channel": "当令",
+          "span": "亥月"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 17,
+      "question": "兄病",
+      "outcome": "戊申日沉疴复起",
+      "experience": "忌神与元神同动，接续相生反吉；白虎螣蛇不主死",
+      "windows": [
+        {
+          "branch": "申",
+          "unit": "日",
+          "channel": "值",
+          "span": "戊申日"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 18,
+      "question": "出门",
+      "outcome": "未能出门，女死于辰日",
+      "experience": "动逢合为合绊；应期取用神所化之支",
+      "windows": [
+        {
+          "branch": "辰",
+          "unit": "日",
+          "channel": "合",
+          "span": "辰日"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 19,
+      "question": "已悔婚还可成否",
+      "outcome": "次年三月仍成婚",
+      "experience": "六冲变六合可不看用神，竟以吉断",
+      "windows": [
+        {
+          "branch": "辰",
+          "unit": "月",
+          "channel": "值",
+          "span": "三月"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 20,
+      "question": "占祖坟风水",
+      "outcome": "书只记断语（明年起用、申年得子、六合万载安然）",
+      "experience": "六合变六合主久远",
+      "windows": [
+        {
+          "branch": "申",
+          "unit": "年",
+          "channel": "值",
+          "span": "申年"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 24,
+      "question": "子久出不归生死",
+      "outcome": "子年建功，卯年得意而归",
+      "experience": "用神旺相，六冲不忌；静爻逢冲之年应（卯冲酉）",
+      "windows": [
+        {
+          "branch": "子",
+          "unit": "年",
+          "channel": "冲",
+          "span": "子年"
+        },
+        {
+          "branch": "卯",
+          "unit": "年",
+          "channel": "冲",
+          "span": "卯年"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 27,
+      "question": "子出痘",
+      "outcome": "死于寅日寅时",
+      "experience": "野鹤数十年唯一验得之三刑（寅月申日巳爻）；平时三刑须兼他爻克害才验",
+      "windows": [
+        {
+          "branch": "寅",
+          "unit": "日",
+          "channel": "值",
+          "span": "寅日"
+        },
+        {
+          "branch": "申",
+          "unit": "日",
+          "channel": "值",
+          "span": "申日"
+        },
+        {
+          "branch": "寅",
+          "unit": "月",
+          "channel": "值",
+          "span": "寅月"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 29,
+      "question": "父出外一载无音",
+      "outcome": "二月得意而回",
+      "experience": "动爻日冲不散（神兆机于动）",
+      "windows": [
+        {
+          "branch": "卯",
+          "unit": "月",
+          "channel": "冲",
+          "span": "二月"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 30,
+      "question": "随官府上任",
+      "outcome": "先辞后去，七月城破同遭害",
+      "experience": "反吟用神化回头冲克为大凶",
+      "windows": [
+        {
+          "branch": "申",
+          "unit": "月",
+          "channel": "值",
+          "span": "七月"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 32,
+      "question": "父外任平安否",
+      "outcome": "地方作乱惊险，辰年缺归",
+      "experience": "伏吟主呻吟不得动，冲开之年应",
+      "windows": [
+        {
+          "branch": "辰",
+          "unit": "年",
+          "channel": "冲",
+          "span": "辰年"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 36,
+      "question": "（同事再占）",
+      "outcome": "乙卯日起程，寅卯月满载而归",
+      "experience": "出空、出月之期应；多占消疑",
+      "windows": [
+        {
+          "branch": "卯",
+          "unit": "日",
+          "channel": "填实",
+          "span": "乙卯日"
+        },
+        {
+          "branch": "卯",
+          "unit": "月",
+          "channel": "填实",
+          "span": "卯月"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 37,
+      "question": "妻病",
+      "outcome": "子日起床（辰土旺于子）",
+      "experience": "土寄生于申、旺于子；用神旺地之日亦是应期",
+      "windows": [
+        {
+          "branch": "子",
+          "unit": "日",
+          "channel": "当令",
+          "span": "子日"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 38,
+      "question": "将来有官否",
+      "outcome": "巳年（实破之年）承袭世职",
+      "experience": "月破之爻动则有用，应在实破之年",
+      "windows": [
+        {
+          "branch": "巳",
+          "unit": "年",
+          "channel": "填实",
+          "span": "巳年"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 39,
+      "question": "父何日归",
+      "outcome": "卯日得信（破而逢合），乙未日到家（化空出空）",
+      "experience": "破而逢合之日、化空出空之日应",
+      "windows": [
+        {
+          "branch": "卯",
+          "unit": "日",
+          "channel": "填实",
+          "span": "卯日"
+        },
+        {
+          "branch": "未",
+          "unit": "日",
+          "channel": "填实",
+          "span": "乙未日"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 40,
+      "question": "候文书何日得领",
+      "outcome": "甲午日出空必得",
+      "experience": "伏神旬空，出空之日出现",
+      "windows": [
+        {
+          "branch": "午",
+          "unit": "日",
+          "channel": "填实",
+          "span": "甲午日"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 41,
+      "question": "子病",
+      "outcome": "午日起床",
+      "experience": "飞神空则伏神易出",
+      "windows": [
+        {
+          "branch": "午",
+          "unit": "日",
+          "channel": "值",
+          "span": "午日"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 45,
+      "question": "迎父能否相遇",
+      "outcome": "未日相遇（实空实破之日）",
+      "experience": "化出之支空破者，实空实破之日应",
+      "windows": [
+        {
+          "branch": "未",
+          "unit": "日",
+          "channel": "填实",
+          "span": "未日"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 47,
+      "question": "占病",
+      "outcome": "卒于六月（未为世墓）",
+      "experience": "用神旬空不能避克；退神得生扶不退",
+      "windows": [
+        {
+          "branch": "未",
+          "unit": "月",
+          "channel": "值",
+          "span": "六月"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 48,
+      "question": "妻母病",
+      "outcome": "卒于甲戌日（戌出空之日）",
+      "experience": "化出空破之进神，填实之日应",
+      "windows": [
+        {
+          "branch": "戌",
+          "unit": "日",
+          "channel": "填实",
+          "span": "甲戌日"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 51,
+      "question": "已定重罪可否赦免",
+      "outcome": "次年辰月蒙赦",
+      "experience": "墓神破则易出；只验世爻休囚被克而入墓者",
+      "windows": [
+        {
+          "branch": "辰",
+          "unit": "月",
+          "channel": "值",
+          "span": "辰月"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    },
+    {
+      "id": 53,
+      "question": "防涨水冲麦",
+      "outcome": "卯日大晴",
+      "experience": "动而逢合之日应；独发只作参考，仍以用神为主",
+      "windows": [
+        {
+          "branch": "卯",
+          "unit": "日",
+          "channel": "合",
+          "span": "卯日"
+        }
+      ],
+      "same_window_note": "多通道同支同单位时可标 high；与书中应验支比对人工勾选 same/diff"
+    }
+  ]
+}

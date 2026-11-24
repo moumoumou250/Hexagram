@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>京房 · 分步产物</title>
+<style>
+:root{color-scheme:light;--paper:#f6f3e9;--card:#fffdf7;--ink:#243b32;--muted:#52645a;--line:#dedfd1;--jade:#24483c;--rust:#9e412b;--ok:#2f6b4f;--warn:#8a5a12;--bad:#9e412b;--skip:#5a6570}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.65 "Microsoft YaHei","PingFang SC",sans-serif}
+main{max-width:980px;margin:auto;padding:24px 28px 56px}
+h1,h2,h3,.brand{font-family:"Noto Serif SC","Songti SC",SimSun,serif}
+h1,h2,h3,p{margin:0}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.brand{font-size:22px;font-weight:bold;letter-spacing:.08em}
+.jump{background:var(--card);border:1px solid #aeb9ab;border-radius:7px;padding:7px 11px;color:var(--jade);text-decoration:none;white-space:nowrap;font-size:13px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:14px}
+.meta{padding:14px 18px;display:grid;gap:6px}
+.meta .question{font-weight:bold;font-size:17px;overflow-wrap:anywhere}
+.meta .row{color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:4px 16px}
+.nav{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px 16px}
+.nav a{text-decoration:none;color:var(--jade);border:1px solid var(--line);background:#f3f5ee;border-radius:999px;padding:4px 10px;font-size:13px}
+.step{scroll-margin-top:16px}
+.step-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line);background:#f3f5ee}
+.step-head h2{font-size:20px}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:bold;color:#fff;background:var(--skip)}
+.badge.accepted{background:var(--ok)}.badge.partial,.badge.pending{background:var(--warn)}.badge.blocked{background:var(--bad)}.badge.skipped{background:var(--skip)}
+.body{padding:14px 18px 18px}
+.muted{color:var(--muted);font-size:13px}
+.empty{color:var(--muted);font-style:italic;margin:4px 0 0}
+h3{font-size:15px;margin:14px 0 6px;color:#355044}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{background:#edf0e7;color:#41564b;font-weight:bold}
+code,pre{font-family:Consolas,"Courier New",monospace}
+pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:#f7f6f0;padding:10px;border-radius:8px;border:1px solid var(--line)}
+details{margin-top:6px}
+summary{cursor:pointer;color:var(--jade);font-size:13px}
+.list{margin:0;padding-left:1.2em}
+.list li{margin:4px 0}
+.extra{margin-top:8px;padding:10px 12px;border:1px dashed var(--line);border-radius:8px}
+@media(max-width:720px){main{padding:14px 12px 36px}.brand{font-size:18px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <div class="brand">京房 · 分步产物</div>
+    <a class="jump" href="#top">回到顶部</a>
+  </div>
+  <div class="panel" id="top">
+    <div class="meta">
+      <div class="question" id="question">—</div>
+      <div class="row" id="meta-row"></div>
+    </div>
+    <nav class="nav" id="nav" aria-label="步骤导航"></nav>
+  </div>
+  <div id="steps"></div>
+  <p class="muted" style="margin-top:8px">本页只读展示 journal 按步归类结果，不修改卦例；缺项显示为未记录。</p>
+</main>
+<script id="dump-data" type="application/json"></script>
+<script>
+(function () {
+  const dump = JSON.parse(document.getElementById("dump-data").textContent || "{}");
+  const labels = {identify:"认卦",focus:"取用",strength:"旺衰",change:"动变",timing:"应期",synthesis:"汇总"};
+  document.getElementById("question").textContent = dump.question || "（无问题）";
+  document.getElementById("meta-row").innerHTML = [
+    "编号 " + (dump.run_id || "—"),
+    "状态 " + (dump.state_label || dump.state || "—"),
+    dump.source ? ("来源 " + dump.source) : null,
+    dump.rule_version ? ("规则 " + dump.rule_version) : null,
+    dump.created_at ? ("创建 " + dump.created_at) : null
+  ].filter(Boolean).map(function (t) { return "<span>" + escapeHtml(t) + "</span>"; }).join("");
+
+  const nav = document.getElementById("nav");
+  const root = document.getElementById("steps");
+  const steps = dump.steps || {};
+  Object.keys(steps).forEach(function (name) {
+    const block = steps[name];
+    const a = document.createElement("a");
+    a.href = "#" + name;
+    a.textContent = (labels[name] || name) + " · " + (block.state_label || block.state || "");
+    nav.appendChild(a);
+
+    const panel = document.createElement("section");
+    panel.className = "panel step";
+    panel.id = name;
+    panel.innerHTML =
+      '<div class="step-head"><h2>' + escapeHtml(block.label || name) +
+      ' <span class="muted">(' + escapeHtml(name) + ')</span></h2>' +
+      '<span class="badge ' + escapeHtml(block.state || "") + '">' +
+      escapeHtml(block.state_label || block.state || "") + "</span></div>" +
+      '<div class="body" data-body></div>';
+    const body = panel.querySelector("[data-body]");
+    const bits = [];
+    if (block.skill_use_label) bits.push('<p class="muted">Skill · ' + escapeHtml(block.skill_use_label) + "</p>");
+    if (block.reason) bits.push('<p class="muted">原因 · ' + escapeHtml(block.reason) + "</p>");
+    if (block.empty_note && !(block.facts || []).length && !(block.judgments || []).length && !(block.pending || []).length) {
+      bits.push('<p class="empty">' + escapeHtml(block.empty_note) + "</p>");
+    }
+    bits.push(renderGroup("事实", block.facts || [], true));
+    bits.push(renderGroup("判断", block.judgments || [], false));
+    bits.push(renderGroup("待核", block.pending || [], false));
+    bits.push(renderExtras(block.extras || {}));
+    body.innerHTML = bits.join("");
+    root.appendChild(panel);
+  });
+
+  function renderGroup(title, items, isFact) {
+    if (!items.length) return '<h3>' + title + '</h3><p class="empty">本步无</p>';
+    const rows = items.map(function (item) {
+      const topic = item.topic ? "[" + escapeHtml(item.topic) + "] " : "";
+      const main = isFact ? (item.brief || item.summary || "") : (item.summary || "");
+      const refs = (item.refs || []).length ? " · refs " + item.refs.map(function (r) { return "E" + r; }).join(",") : "";
+      let extra = "";
+      if (item.detail) {
+        extra = "<details><summary>原始 detail</summary><pre>" + escapeHtml(JSON.stringify(item.detail, null, 2)) + "</pre></details>";
+      }
+      return "<tr><td>E" + escapeHtml(String(item.id)) + "</td><td>" + topic + escapeHtml(main) + escapeHtml(refs) + extra + "</td></tr>";
+    }).join("");
+    return "<h3>" + title + "</h3><div class='scroll'><table><thead><tr><th>编号</th><th>内容</th></tr></thead><tbody>" + rows + "</tbody></table></div>";
+  }
+
+  function renderExtras(extras) {
+    const keys = Object.keys(extras || {});
+    if (!keys.length) return "";
+    return "<h3>相关顶层</h3>" + keys.map(function (key) {
+      const value = extras[key];
+      if (value == null || (Array.isArray(value) && !value.length) || (typeof value === "object" && !Array.isArray(value) && !Object.keys(value).length)) {
+        return '<div class="extra"><strong>' + escapeHtml(key) + '</strong> · <span class="empty">未记录</span></div>';
+      }
+      return '<div class="extra"><strong>' + escapeHtml(key) + '</strong><details open><summary>展开</summary><pre>' +
+        escapeHtml(JSON.stringify(value, null, 2)) + "</pre></details></div>";
+    }).join("");
+  }
+
+  function escapeHtml(text) {
+    return String(text).replace(/[&<>"']/g, function (ch) {
+      return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch];
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-# Jingfang v5 验证输出（v4 + 库内写入乾坤互变卦反吟）  2026-11-23 14:40 (UTC+8)
+# Jingfang v5 验证输出（v4 + 库内写入乾坤互变卦反吟）  2026-11-24 08:35 (UTC+8)
 
 $ python3 verify/build_gua_sql.py
 wrote gua.sql 1483347
@@ -102,77 +102,23 @@ PASS  卦反吟列只读: 固定盘只读：请改源数据后重建
 TOTAL MISMATCHES 0
 exit=0
 
-$ python3 verify/compat_v2.py
-OK   hexagram_change        v2=  4096 v3=  4096 v3-v2=0 v2-v3=0
-OK   change_board           v2= 12288 v3= 12288 v3-v2=0 v2-v3=0
-OK   branch_interaction     v2=   144 v3=   144 v3-v2=0 v2-v3=0
-OK   changsheng             v2=    20 v3=    20 v3-v2=0 v2-v3=0
-OK   dizhi                  v2=    12 v3=    12 v3-v2=0 v2-v3=0
-OK   dizhi_chong            v2=    12 v3=    12 v3-v2=0 v2-v3=0
-OK   dizhi_he               v2=    12 v3=    12 v3-v2=0 v2-v3=0
-OK   hexagram_board         v2=   384 v3=   384 v3-v2=0 v2-v3=0
-OK   hexagram_code          v2=    64 v3=    64 v3-v2=0 v2-v3=0
-OK   hexagram_lines         v2=   384 v3=   384 v3-v2=0 v2-v3=0
-OK   hexagrams              v2=    64 v3=    64 v3-v2=0 v2-v3=0
-OK   hidden_spirits         v2=    56 v3=    56 v3-v2=0 v2-v3=0
-OK   integrity_issues       v2=     0 v3=     0 v3-v2=0 v2-v3=0
-OK   jiazi                  v2=    60 v3=    60 v3-v2=0 v2-v3=0
-OK   jin_tui                v2=    14 v3=    14 v3-v2=0 v2-v3=0
-OK   liuqin_rule            v2=    25 v3=    25 v3-v2=0 v2-v3=0
-OK   liushen                v2=    60 v3=    60 v3-v2=0 v2-v3=0
-OK   month_strength         v2=    60 v3=    60 v3-v2=0 v2-v3=0
-OK   najia                  v2=    48 v3=    48 v3-v2=0 v2-v3=0
-OK   sanhe                  v2=     4 v3=     4 v3-v2=0 v2-v3=0
-OK   sanxing                v2=    12 v3=    12 v3-v2=0 v2-v3=0
-OK   tiangan                v2=    10 v3=    10 v3-v2=0 v2-v3=0
-OK   trigram_change         v2=    56 v3=    56 v3-v2=0 v2-v3=0
-OK   trigram_fanfu          v2=     8 v3=     8 v3-v2=0 v2-v3=0
-OK   trigrams               v2=     8 v3=     8 v3-v2=0 v2-v3=0
-OK   wuxing                 v2=     5 v3=     5 v3-v2=0 v2-v3=0
-OK   wuxing_relation        v2=    25 v3=    25 v3-v2=0 v2-v3=0
-OK   yongshen_roles         v2=     5 v3=     5 v3-v2=0 v2-v3=0
-OK   hexagram_change 旧列顺序为前缀；新增列 ['move_mask', 'l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'inner_changed', 'outer_changed', 'gua_fanyin']
-OK   change_board 旧列顺序为前缀；新增列 ['move_mask', 'changed_polarity', 'line_fanfu', 'shi_ying']
-COMPAT DIFFS 0
-exit=0
+$ python3 verify/compat/compat_v2.py
+Traceback (most recent call last):
+  File "E:\京房\Jingfang-v5\verify\compat\compat_v2.py", line 8, in <module>
+    d = sqlite3.connect(tmp); d.executescript(open(V2, encoding='utf-8').read()); d.close()
+                                              ~~~~^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'E:\\京房\\Jingfang-v5\\verify\\compat\\..\\..\\..\\Jingfang-v2\\gua.sql'
+exit=1
 
-$ python3 verify/diff_v4.py
-新增对象: ['gua_fanyin']  删除对象: []
-  gua_fanyin: [('乾', '坤', '反吟', '反伏章第二十五 1925本PDF p88：如乾變坤是也'), ('坤', '乾', '反吟', '反伏章第二十五 1925本PDF p88：乾變坤之互变')]
-OK   branch_interaction     v4=   144 v5=   144 共有列差异 v5-v4=0 v4-v5=0
-OK   change_board           v4= 12288 v5= 12288 共有列差异 v5-v4=0 v4-v5=0
-OK   changsheng             v4=    20 v5=    20 共有列差异 v5-v4=0 v4-v5=0
-OK   dizhi                  v4=    12 v5=    12 共有列差异 v5-v4=0 v4-v5=0
-OK   dizhi_chong            v4=    12 v5=    12 共有列差异 v5-v4=0 v4-v5=0
-OK   dizhi_he               v4=    12 v5=    12 共有列差异 v5-v4=0 v4-v5=0
-OK   hexagram_board         v4=   384 v5=   384 共有列差异 v5-v4=0 v4-v5=0
-OK   hexagram_change        v4=  4096 v5=  4096 共有列差异 v5-v4=0 v4-v5=0 新增列 ['gua_fanyin'] 非空 2 行: [('乾为天', '坤为地', 63, '反吟'), ('坤为地', '乾为天', 63, '反吟')]
-OK   hexagram_code          v4=    64 v5=    64 共有列差异 v5-v4=0 v4-v5=0
-OK   hexagram_lines         v4=   384 v5=   384 共有列差异 v5-v4=0 v4-v5=0
-OK   hexagram_transition    v4=  4096 v5=  4096 共有列差异 v5-v4=0 v4-v5=0 新增列 ['gua_fanyin'] 非空 2 行: [(1, 63, '反吟'), (2, 63, '反吟')]
-OK   hexagrams              v4=    64 v5=    64 共有列差异 v5-v4=0 v4-v5=0
-OK   hidden_spirits         v4=    56 v5=    56 共有列差异 v5-v4=0 v4-v5=0
-OK   integrity_issues       v4=     0 v5=     0 共有列差异 v5-v4=0 v4-v5=0
-OK   jiazi                  v4=    60 v5=    60 共有列差异 v5-v4=0 v4-v5=0
-OK   jin_tui                v4=    14 v5=    14 共有列差异 v5-v4=0 v4-v5=0
-OK   liuqin_rule            v4=    25 v5=    25 共有列差异 v5-v4=0 v4-v5=0
-OK   liushen                v4=    60 v5=    60 共有列差异 v5-v4=0 v4-v5=0
-OK   month_strength         v4=    60 v5=    60 共有列差异 v5-v4=0 v4-v5=0
-OK   moving_line_change     v4= 12288 v5= 12288 共有列差异 v5-v4=0 v4-v5=0
-OK   najia                  v4=    48 v5=    48 共有列差异 v5-v4=0 v4-v5=0
-OK   sanhe                  v4=     4 v5=     4 共有列差异 v5-v4=0 v4-v5=0
-OK   sanxing                v4=    12 v5=    12 共有列差异 v5-v4=0 v4-v5=0
-OK   tiangan                v4=    10 v5=    10 共有列差异 v5-v4=0 v4-v5=0
-OK   trigram_change         v4=    56 v5=    56 共有列差异 v5-v4=0 v4-v5=0
-OK   trigram_fanfu          v4=     8 v5=     8 共有列差异 v5-v4=0 v4-v5=0
-OK   trigrams               v4=     8 v5=     8 共有列差异 v5-v4=0 v4-v5=0
-OK   wuxing                 v4=     5 v5=     5 共有列差异 v5-v4=0 v4-v5=0
-OK   wuxing_relation        v4=    25 v5=    25 共有列差异 v5-v4=0 v4-v5=0
-OK   yongshen_roles         v4=     5 v5=     5 共有列差异 v5-v4=0 v4-v5=0
-V4 DIFFS (unexpected) 0
-exit=0
+$ python3 verify/compat/diff_v4.py
+Traceback (most recent call last):
+  File "E:\京房\Jingfang-v5\verify\compat\diff_v4.py", line 8, in <module>
+    d = sqlite3.connect(tmp); d.executescript(open(V4, encoding='utf-8').read()); d.close()
+                                              ~~~~^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'E:\\京房\\Jingfang-v5\\verify\\compat\\..\\..\\..\\Jingfang-v4\\gua.sql'
+exit=1
 
-$ python3 verify/cases_check.py
+$ python3 verify/cases/cases_check.py
 卦例 53 个；核对 396 条（变卦推算 53 + mask 正查 53 + mask 反查 53 + 断语查表 226（按 move_mask 查） + 无妄固定示例 11）；不符 0 条
 维基文库录图与库比对：差异 8 处（录文问题，需对照 1925 本；目前仅卦例37，已目验 1925 本确认是录文错）
   DIFF (37, 'C40', '第6爻动静 录图动 书例静')
@@ -185,17 +131,11 @@ $ python3 verify/cases_check.py
   DIFF (37, 'C40', '变卦第1爻 录图子 库卯')
 exit=0
 
-$ python3 verify/audit_regress.py
-用神：书中明言 21 与规则一致 21 不一致 0
-应期：书中有 114 Counter({'strict': 78, 'extended': 32, None: 4})
-cases 271 chart-check fails 0 claim fails 11 claims total 184
-卦例 258 Counter({'一致': 233, '一致（仅录文已校）': 22, '有差异': 3}) 差异计数 {'原书自身矛盾': 4, '录文错误': 27}
-回归 通过
-v3 规则 + v5 库 相对 v3 基线的变化： ['DIFF IXI03 ']
-只变 IXI03 且转为一致： YES
+$ python3 verify/compat/audit_regress.py
+audit-v3 不在，跳过
 exit=0
 
-$ python3 verify/skill_walkthrough.py
+$ python3 verify/cases/skill_walkthrough.py
 ======================================================================
 用神元神忌神仇神章：辰月戊申日占父近病
 书断：取临月建之辰土；申冲寅暗动克辰；午化未合住；丑日冲未起床
@@ -245,16 +185,16 @@ $ python3 verify/skill_walkthrough.py
 exit=0
 
 $ python3 verify/perf_size.py
-sqlite 3.46.1
-gua.sql 1,887,733 字节；空库执行 0.55 秒；建成库文件 1,785,856 字节
+sqlite 3.53.1
+gua.sql 1,905,653 字节；空库执行 0.92 秒；建成库文件 1,785,856 字节
 hexagram_transition: 4096 行
 moving_line_change: 12288 行
-① 卦名+l1..l6: 0.017 ms/次  → [('天水讼',)]
-② 卦名+mask: 0.004 ms/次  → [('天地否', '六冲变六合')]
-③ 本爻变爻并排: 0.008 ms/次  → [(1, '应', '庚子水父母', '戊寅木兄弟', '动生变', None, None, None), (2, '', '庚寅木兄弟', '戊辰土妻财', '动克变', None, None, None)]
-④ 反查动爻: 0.004 ms/次  → [(1, '1')]
-⑤ 某卦六冲变六合的动法: 0.018 ms/次  → [(62, '2,3,4,5,6', '地天泰'), (1, '1', '天地否'), (49, '1,5,6', '雷地豫')] …
-⑥ 世爻化回头克（全库计数）: 1.694 ms/次  → [(440,)]
+① 卦名+l1..l6: 0.222 ms/次  → [('天水讼',)]
+② 卦名+mask: 0.210 ms/次  → [('天地否', '六冲变六合')]
+③ 本爻变爻并排: 0.221 ms/次  → [(1, '应', '庚子水父母', '戊寅木兄弟', '动生变', None, None, None), (2, '', '庚寅木兄弟', '戊辰土妻财', '动克变', None, None, None)]
+④ 反查动爻: 0.199 ms/次  → [(1, '1')]
+⑤ 某卦六冲变六合的动法: 0.251 ms/次  → [(62, '2,3,4,5,6', '地天泰'), (1, '1', '天地否'), (49, '1,5,6', '雷地豫')] …
+⑥ 世爻化回头克（全库计数）: 3.434 ms/次  → [(440,)]
 exit=0
 
-ALL STEPS EXIT 0: YES
+ALL STEPS EXIT 0: NO

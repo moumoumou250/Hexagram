@@ -298,6 +298,16 @@ class RuleData:
         for actor in sorted({branch for branch in (month, day_branch) if branch}):
             relations.extend(query("branch_interaction", "actor = ? AND target = ?", (actor, target))
                              for target in sorted(targets))
+        movers = sorted(
+            (line for line in lines if line["position"] in moving and line.get("branch")),
+            key=lambda line: line["position"],
+        )
+        for index, left in enumerate(movers):
+            for right in movers[index + 1:]:
+                relations.append(query(
+                    "branch_interaction", "actor = ? AND target = ?",
+                    (left["branch"], right["branch"]),
+                ))
         facts["relations"] = {"queries": relations}
         facts["roles"] = {"queries": [query("yongshen_roles"), query("dizhi"), query("liuqin_rule"),
                                       query("wuxing_relation")]}

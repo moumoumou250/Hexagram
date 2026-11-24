@@ -1,0 +1,10 @@
+{
+  "config_version": "1.0",
+  "show_weight_column": false,
+  "enabled_blocks": [
+    "R01", "R02", "R04", "R05", "R06", "R07", "R08", "R10", "R11", "R13", "R19", "R14", "R15",
+    "X01", "X02"
+  ],
+  "scope": "yongshen_only",
+  "el15": true
+}

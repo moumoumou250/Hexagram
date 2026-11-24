@@ -2,7 +2,8 @@
 
 import json
 
-from .review import facts, rows
+from .audit import audit_claims
+from .review import DIRECTION_LABEL, LAYER_STATUS_LABEL, OUTCOME_LAYER_LABEL, facts, rows
 from .rule_data import SKILL_PATHS, RuleData, rule_source
 
 STATUS = {
@@ -10,6 +11,7 @@ STATUS = {
     "pending": "待执行", "accepted": "已保存", "blocked": "已中断", "skipped": "已跳过",
 }
 SKILL_USE = {"applied": "已应用", "read": "已读取", "unavailable": "不可用"}
+BOARD_TOPICS = ("chart", "calendar", "relations", "roles", "timing", "moves")
 
 
 def validate(snapshot, directory):
@@ -21,17 +23,28 @@ def validate(snapshot, directory):
             raise ValueError(f"条目 E{entry['id']} 引用了已失效或不属于本次的证据")
     evidence = facts(entries.values())
     known_chart = evidence.get("chart")
+    board_ok = None
+    derived = sorted(topic for topic in evidence if topic not in BOARD_TOPICS)
     if known_chart is not None:
         sources = rule_source(directory, snapshot["rule_version"])
         reconstructed, conflicts, missing = RuleData(sources["gua.sql"].decode("utf-8-sig")).board(
             snapshot["input"], known_chart["transcription"]
         )
         reconstructed["chart"]["transcription"] = known_chart["transcription"]
-        if reconstructed != evidence:
+        board_evidence = {topic: evidence[topic] for topic in BOARD_TOPICS if topic in evidence}
+        if reconstructed != board_evidence:
             raise ValueError("本轮查表证据与冻结规则下的复算不一致")
         if snapshot["steps"]["identify"]["state"] == "accepted" and (conflicts or missing):
             raise ValueError("已验收盘面存在冲突或缺项")
-    return {"entries": len(entries), "chart_replayed": known_chart is not None}
+        board_ok = True
+    claims = audit_claims(snapshot)
+    return {
+        "entries": len(entries),
+        "chart_replayed": known_chart is not None,
+        "board_consistent": board_ok,
+        "derived_topics": derived,
+        "claims": claims,
+    }
 
 
 def _text(value):
@@ -54,9 +67,16 @@ def _finding(entry, steps):
     lines = [f"- **E{entry['id']} · {label}** {_text(entry['summary'])}"]
     if detail.get("skill"):
         lines.append(f"  - 规则 `{detail['skill']}` · {_text(detail['section'])} · {_text(detail['rule'])}")
-    for key, name in (("condition", "条件"), ("exceptions", "例外")):
-        if detail.get(key):
-            lines.append(f"  - {name} · {_text(detail[key])}")
+    for key, name in (("condition", "条件"), ("exceptions", "例外"),
+                      ("branch", "应期支"), ("unit", "单位"), ("channel", "通道"),
+                      ("domain", "取象域"), ("force_override", "力度覆写")):
+        if detail.get(key) is not None:
+            value = detail[key]
+            if key == "force_override":
+                value = f"{value}（{detail.get('override_reason', '')}）"
+            lines.append(f"  - {name} · {_text(value)}")
+    if detail.get("elements"):
+        lines.append("  - 取象要素 · " + "、".join(_text(item) for item in detail["elements"]))
     if entry["refs"]:
         lines.append("  - 引用 · " + "、".join(f"E{ref}" for ref in entry["refs"]))
     return lines
@@ -93,6 +113,53 @@ def _daily_lines(evidence, focus):
         name = row["relative"] + row["stem"] + branch + row["element"]
         lines.append(f"| {position} | {name} | {'、'.join(marker) or '—'} | "
                      f"{strength.get(row['element'], '待核')} | {month} | {day} | {void} |")
+    return lines
+
+
+def _verdict_section(snapshot):
+    verdict = snapshot.get("verdict")
+    if not verdict:
+        return ["", "### 结论的分层与证伪条件", "", "- 本次未记录分层条件。"]
+    lines = ["", "### 结论的分层与证伪条件", "",
+             f"- 方向 · {DIRECTION_LABEL.get(verdict.get('direction'), verdict.get('direction'))}",
+             "", "| 层 | 成立条件 | 状态 | 依据 |", "| --- | --- | --- | --- |"]
+    for layer in verdict.get("layers") or ():
+        refs = "、".join(f"E{ref}" for ref in layer.get("refs") or ())
+        lines.append(f"| {_text(layer['name'])} | {_text(layer['condition'])} | "
+                     f"{LAYER_STATUS_LABEL.get(layer['status'], layer['status'])} | {refs or '—'} |")
+    lines.append(f"- 证伪条件 · {_text(verdict.get('falsifier'))}")
+    return lines
+
+
+def _outcome_section(snapshot):
+    outcomes = snapshot.get("outcomes") or []
+    if not outcomes:
+        return []
+    declared = {layer["name"] for layer in (snapshot.get("verdict") or {}).get("layers") or ()}
+    planned = {layer["name"]: layer for layer in (snapshot.get("verdict") or {}).get("layers") or ()}
+    lines = ["", "## 6. 应验与复盘", ""]
+    for item in sorted(outcomes, key=lambda row: row.get("checked_at") or ""):
+        result = item.get("result")
+        lines.append(f"- 核对日期 · {_text(item.get('checked_at'))} · 结果 · "
+                     f"{OUTCOME_LAYER_LABEL.get(result, result)}")
+        lines.extend(["", "| 层 | 占时状态 | 实际 | 证据 | 证据强度 |",
+                      "| --- | --- | --- | --- | --- |"])
+        for layer in item.get("layers") or ():
+            prior = planned.get(layer["name"], {})
+            lines.append(
+                f"| {_text(layer['name'])} | {LAYER_STATUS_LABEL.get(prior.get('status'), '—')} | "
+                f"{OUTCOME_LAYER_LABEL.get(layer['status'], layer['status'])} | "
+                f"{_text(layer.get('evidence'))} | 强（占时已写明该层） |"
+            )
+        for layer in item.get("supplemental_layers") or ():
+            lines.append(
+                f"| {_text(layer['name'])} | — | "
+                f"{OUTCOME_LAYER_LABEL.get(layer['status'], layer['status'])} | "
+                f"{_text(layer.get('evidence'))} | 弱（占时未设该层，事后补充） |"
+            )
+        if item.get("note"):
+            lines.append(f"- 备注 · {_text(item['note'])}")
+        lines.append("")
     return lines
 
 
@@ -166,6 +233,17 @@ def render(snapshot, status):
         lines.append(f"- 所取类别 · {focus['relative']}")
         entry = {"主用神": focus["primary"], "全部候选": focus["candidates"], "原忌仇": focus["roles"]}
         lines.extend(["", '~~~json', json.dumps(entry, ensure_ascii=False, indent=2), '~~~', ""])
+    if forces := evidence.get("forces"):
+        lines.extend(["", "### 用神元忌的力量判定", ""])
+        if forces.get("primary_rooted"):
+            lines.append(f"- 用神根基 · {forces['primary_rooted']}"
+                         + (f"（{'、'.join(forces.get('primary_rooted_reasons') or ())}）"
+                            if forces.get("primary_rooted_reasons") else ""))
+        lines.extend(["", "| 爻位 | 角色 | 力度 | 理由 |", "| --- | --- | --- | --- |"])
+        for line in forces.get("lines") or ():
+            mark = "覆写" if line.get("force_override") else ""
+            lines.append(f"| {line['position']} | {line.get('role')} | {line.get('force')}{mark} | "
+                         f"{'、'.join(line.get('reasons') or ()) or '—'} |")
     for step in ("focus", "strength", "change", "timing"):
         task = tasks[step]
         if task["state"] == "pending":
@@ -190,7 +268,9 @@ def render(snapshot, status):
             lines.extend(_finding(entry, tasks))
     if not any(entry["step"] == "synthesis" and entry["kind"] == "judgment" for entry in findings):
         lines.append("- 当前尚无汇总结论。")
+    lines.extend(_verdict_section(snapshot))
     for task in tasks.values():
         if task.get("reason") and task["reason"] != "本次未询问应期":
             lines.append(f"- {task['label']} · {_text(task['reason'])}")
+    lines.extend(_outcome_section(snapshot))
     return "\n".join(lines) + "\n"

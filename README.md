@@ -32,7 +32,7 @@ Jingfang v5 是一个用于解读和复核京房纳甲六爻卦例的本地项�
 | 校验历史记录 | `python -X utf8 -m jingfang validate 解卦编号` |
 | 校验并生成本次用户版 HTML | `python -X utf8 -m jingfang export 解卦编号 --html` |
 | 获取已保存的 Markdown 路径 | `python -X utf8 -m jingfang export 解卦编号` |
-| 更新默认 HTML 模板中的排盘数据 | `python -X utf8 tools/build_view.py` |
+| 更新默认 HTML 模板中的单卦预览 | `python -X utf8 tools/build_view.py` |
 | 运行流程回归和百例核对 | `python -X utf8 verify/workflow/blackboard_check.py` |
 | 核对书例 | `python -X utf8 verify/cases/cases_check.py` |
 
@@ -40,8 +40,8 @@ Jingfang v5 是一个用于解读和复核京房纳甲六爻卦例的本地项�
 
 ## 解读交付与复核
 
-1. **导出本次解读**。按解卦编号导出 HTML 时，程序先校验记录，再把本次问题、盘面和结论填入默认模板。首次打开和点击“重载本次卦例”都会载入这份记录。
-2. **浏览器验收**。安装 Node.js 和 `playwright-core` 后，可运行 `node verify/workflow/view_check.cjs "导出的HTML路径" "Chrome可执行文件路径"`，核对首次载入及重载后的问题、本变卦、世应、动爻、主用神和结论。
+1. **导出本次解读**。按解卦编号导出 HTML 时，程序先校验记录，再把本次问题、盘面和结论填入默认模板。成品可离线打开，一页展示一份卦例。
+2. **浏览器验收**。安装 Node.js 和 `playwright-core` 后，可运行 `node verify/workflow/view_check.cjs "导出的HTML路径" "Chrome可执行文件路径"`，核对问题、本变卦、世应、动爻、主用神和结论。
 3. **区分排盘和判断**。固定盘和动变按本次冻结的 SQL 复算。主用神由解读步骤结合所问选定，导出页面按记录还原其来源和位置。动爻未知时显示待核。
 4. **定位转录错误**。同位变爻地支提交错误时，提示包含爻位、字段、提交值和复算值。先核对原图；若未汇总记录的输入有误，用 `revise` 更正后从认卦重新执行。
 5. **验证排盘**。运行 `python -X utf8 verify/oracle_v3.py` 独立复算 64 卦 × 64 种动爻组合。上表另列百例核对与书例验证命令，用于比对具体案例的动爻、变爻和变卦。
