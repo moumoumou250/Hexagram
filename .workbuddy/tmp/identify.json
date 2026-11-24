@@ -1,0 +1,23 @@
+{
+  "state": "accepted",
+  "skill_use": "applied",
+  "chart": {
+    "base_name": "山风蛊",
+    "line_code": "011001",
+    "moving_positions": [3],
+    "changed_name": "山水蒙",
+    "changed_code": "010001",
+    "month_branch": "酉",
+    "day_ganzhi": "丙寅"
+  },
+  "entries": [
+    {
+      "kind": "judgment",
+      "topic": "chart",
+      "summary": "下巽上艮为山风蛊，三爻辛酉金独发，阳变阴，内卦由巽变坎，推得山水蒙，与题头所列变卦一致",
+      "rule": "以本卦栏为准，下三爻为内卦；动爻按变化前的阴阳读取，○为老阳动变阴；变卦一律由动爻推出，move_mask 初爻为1、三爻为4",
+      "section": "操作",
+      "condition": "六爻爻画与上下卦名一致，图中标有变卦可反查核对"
+    }
+  ]
+}

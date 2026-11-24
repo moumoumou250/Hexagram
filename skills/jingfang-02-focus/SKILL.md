@@ -5,7 +5,9 @@ description: 根据所问对象，从已有盘面选取主用神，定原神、�
 
 # 按问题取用神
 
-在空的 SQLite 数据库执行项目根目录的 `gua.sql`。已认卦后，以本卦全名查询 `SELECT * FROM hexagram_board WHERE name = ? ORDER BY position`，参数绑定卦名，初爻为 1、上爻为 6。已有本次查询结果时直接复用。
+在空的 SQLite 数据库执行项目的 `database/gua.sql`。已认卦后，以本卦全名查询 `SELECT * FROM hexagram_board WHERE name = ? ORDER BY position`，参数绑定卦名，初爻为 1、上爻为 6。已有本次查询结果时直接复用。
+
+`context.database.v_yong_candidates` 可查本爻、变爻、伏神、月建和日辰。先按所问选六亲，再依盘面比较；`is_selected` 只标记已提交的主用神。爻层候选可提交 `record_judgment` 到 `yongshen_judge`，字段为 `select_reason`。 查询库不可用时，继续使用本次 Markdown 和已有查表证据。
 
 在固定盘的 relative 列筛选所取六亲，按 position 列出候选爻，以 shi_ying 辨世应。定用神后查 `SELECT yuanshen, jishen, choushen FROM yongshen_roles WHERE yongshen = ?`，再在盘上找出各自的爻位：原神生用神，忌神克用神，仇神克原神而生忌神（用神元神忌神仇神章，书作“元神”）。动静、月日取自本次盘面。
 

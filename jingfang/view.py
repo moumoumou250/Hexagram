@@ -33,14 +33,18 @@ def build_data(sql, reading):
         base = chart(base_id)
         changed = None
         moving = {}
+        change_rows = []
         if mask:
             transition, = query("SELECT changed_id FROM hexagram_change WHERE base_id = ? AND move_mask = ?",
                                 base_id, mask)
             changed = chart(transition["changed_id"])
-            moving = {row["position"]: row["changed_relative"] for row in query(
-                "SELECT position, changed_relative FROM change_board WHERE base_id = ? AND move_mask = ?",
+            change_rows = query(
+                "SELECT position, changed_stem, changed_branch, changed_element, changed_relative, "
+                "huitou, jin_tui, hua_stage, hua_chong, hua_he, fuyin_line "
+                "FROM change_board WHERE base_id = ? AND move_mask = ?",
                 base_id, mask,
-            )}
+            )
+            moving = {row["position"]: row["changed_relative"] for row in change_rows}
 
         day = next(iter(query("SELECT branch, kong_1, kong_2 FROM jiazi WHERE ganzhi = ?", reading["day"])), None)
         month = reading["month"]
@@ -62,8 +66,41 @@ def build_data(sql, reading):
             "FROM branch_interaction WHERE actor = ?", actor,
         ) if row["target"] in targets}
 
+        # 世应、动爻互作（不进 facts；仅供解读表第 10 列）
+        pair_links = []
+        shi_line = next((line for line in base["lines"] if line["shi_ying"] == "世"), None)
+        ying_line = next((line for line in base["lines"] if line["shi_ying"] == "应"), None)
+        pair_targets = []
+        if shi_line and ying_line:
+            pair_targets.append(("世应", shi_line["branch"], ying_line["branch"]))
+        mover_branches = [
+            (line["position"], line["branch"]) for line in base["lines"] if line["position"] in moving
+        ]
+        for index, (left_pos, left_branch) in enumerate(mover_branches):
+            for right_pos, right_branch in mover_branches[index + 1:]:
+                pair_targets.append((f"动{left_pos}-{right_pos}", left_branch, right_branch))
+        for label, left, right in pair_targets:
+            if not left or not right:
+                continue
+            hit = next(iter(query(
+                "SELECT actor, target, wuxing, same_branch, chong, he, target_stage "
+                "FROM branch_interaction WHERE actor = ? AND target = ?", left, right,
+            )), None)
+            chong = bool(query("SELECT 1 FROM dizhi_chong WHERE branch_a = ? AND branch_b = ?", left, right))
+            he = bool(query("SELECT 1 FROM dizhi_he WHERE branch_a = ? AND branch_b = ?", left, right))
+            pair_links.append({
+                "label": label, "left": left, "right": right,
+                "chong": int(chong or (hit or {}).get("chong") or 0),
+                "he": int(he or (hit or {}).get("he") or 0),
+                "wuxing": (hit or {}).get("wuxing"),
+                "target_stage": (hit or {}).get("target_stage"),
+            })
+            if hit:
+                interactions[left + right] = hit
+
         return {
-            "base": base, "changed": changed, "moving": moving, "day": day, "interactions": interactions,
+            "base": base, "changed": changed, "moving": moving, "changes": change_rows,
+            "day": day, "interactions": interactions, "pair_links": pair_links,
             "strength": {row["element"]: row["state"] for row in query(
                 "SELECT element, state FROM month_strength WHERE month_branch = ?", month,
             ) if row["element"] in elements},
@@ -109,7 +146,10 @@ def reading_page(run, status, sql):
     pending.extend(step["reason"] for step in run["steps"].values()
                    if step["state"] in ("partial", "blocked") and step.get("reason"))
     verdict = run.get("verdict") or {}
-    interpretation = build_interpretation(run, evidence)
+    detail_summary = " ".join(
+        e["summary"] for e in judgments
+        if e["step"] == "synthesis" and e["topic"] in ("comparison", "conclusion")
+    ) or "尚无汇总结论。"
     reading = {
         "id": str(boards[0]["hexagram_id"]) if verified else "",
         "question": run["input"]["question"], "source": run["input"]["source"],
@@ -121,12 +161,15 @@ def reading_page(run, status, sql):
         "role": focus.get("relative", ""), "primary": focus.get("primary"),
         "candidates": focus.get("candidates", []) if not focus.get("primary") else [],
         "status": STATUS[status["state"]], "pending": list(dict.fromkeys(pending)),
-        "summary": " ".join(e["summary"] for e in judgments if e["step"] == "synthesis"
-                            and e["topic"] in ("comparison", "conclusion")) or "尚无汇总结论。",
+        "detail_summary": detail_summary,
         "notes": [{"step": e["step"], "text": e["summary"]} for e in judgments
                   if e["step"] in ("focus", "change", "strength", "timing")],
         "disclaimer": DISCLAIMER,
         "falsifier": verdict.get("falsifier") or "",
-        "interpretation": interpretation,
     }
+    chart_data = build_data(sql, reading) if reading["id"] else {}
+    interpretation = build_interpretation(run, evidence, chart_data=chart_data)
+    reading["interpretation"] = interpretation
+    reading["headline"] = interpretation.get("headline") or ""
+    reading["summary"] = reading["headline"] or detail_summary
     return render_page(reading, sql)

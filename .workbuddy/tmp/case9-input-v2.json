@@ -1,0 +1,20 @@
+{
+  "question": "想请人引见一位能办事的贵人，这次能不能见到",
+  "source": "《增删卜易》月将章第十六 谒贵例（维基文库录文，对照 gua.sql 复核）",
+  "base_name": "山风蛊",
+  "line_code": "011001",
+  "moving_positions": [3],
+  "changed_name": "山水蒙",
+  "changed_code": "010001",
+  "month_branch": "酉",
+  "day_ganzhi": "丙寅",
+  "ask_timing": true,
+  "source_lines": [
+    {"position": 1, "stem_branch": "辛丑", "relative": "妻财", "moving": false},
+    {"position": 2, "stem_branch": "辛亥", "relative": "父母", "moving": false},
+    {"position": 3, "stem_branch": "辛酉", "relative": "官鬼", "marker": "世", "moving": true, "changed_stem_branch": "戊午", "changed_relative": "子孙"},
+    {"position": 4, "stem_branch": "丙戌", "relative": "妻财", "moving": false},
+    {"position": 5, "stem_branch": "丙子", "relative": "父母", "moving": false, "hidden": "子孙巳火"},
+    {"position": 6, "stem_branch": "丙寅", "relative": "兄弟", "marker": "应", "moving": false}
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "state": "accepted",
+  "skill_use": "applied",
+  "entries": [
+    {
+      "kind": "judgment",
+      "topic": "moving_line",
+      "position": 3,
+      "changed_branch": "午",
+      "summary": "三爻辛酉金独发化戊午火，同爻子孙午火回头克酉金；变爻午火酉月休囚，却得日辰寅木长生，克力不减，用神虽临月建而有伤，属有根受伤而非无根",
+      "rule": "变爻只生克本位动爻，他爻不能生克变爻，惟月建日辰能生克之；化回头克为化凶",
+      "section": "操作",
+      "condition": "本卦只三爻一爻发动，move_mask=4，变卦山水蒙",
+      "refs": [11, 12, 9]
+    },
+    {
+      "kind": "judgment",
+      "topic": "moving_line",
+      "position": 3,
+      "changed_branch": "午",
+      "summary": "动爻酉金本可克应爻兄弟寅木，化午火回头克后自顾不暇，克应之力被制；用神持世受本位变爻所克，须待制住午火方可解",
+      "rule": "动爻能生克静爻与他动爻；变爻回头克则本爻原有力道受制",
+      "section": "操作",
+      "condition": "三爻为世兼用神，六爻寅木为应",
+      "refs": [10, 12, 11]
+    },
+    {
+      "kind": "judgment",
+      "topic": "change",
+      "summary": "本卦山风蛊变山水蒙，只此一爻独发，无爻之反吟伏吟，卦级无六冲六合之变、无卦变生克，独发只作参考而不舍用神",
+      "rule": "反吟取经卦动后三支逐位相冲，伏吟取逐位相同；独发、独静只作参考",
+      "section": "操作",
+      "condition": "内卦巽变坎，外卦艮不动",
+      "refs": [10, 11, 15]
+    }
+  ]
+}

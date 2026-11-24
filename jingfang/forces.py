@@ -219,11 +219,12 @@ def forces(evidence, focus, overrides=None):
             "element": line["element"], "role": role, "force": force, "reasons": reasons,
             "rooted": None,
         }
-        if overrides.get(position):
-            item["force"] = overrides[position]["force"]
-            item["reasons"] = [overrides[position]["override_reason"]]
-            item["force_override"] = overrides[position]["force"]
-            item["override_reason"] = overrides[position]["override_reason"]
+        override = overrides.get(str(position)) or overrides.get(position)
+        if override:
+            item["force"] = override["force"]
+            item["reasons"] = [override["override_reason"]]
+            item["force_override"] = override["force"]
+            item["override_reason"] = override["override_reason"]
         result.append(item)
 
     primary = (focus or {}).get("primary") or {}

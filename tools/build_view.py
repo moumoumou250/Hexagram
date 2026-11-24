@@ -12,9 +12,9 @@ EXAMPLE = {
     "primary": {"source": "base", "position": 3, "branch": "酉", "element": "金"},
     "label": "《增删卜易》书例 · 谒贵", "candidates": [], "pending": [], "notes": [],
     "summary": "书例断待子日方能得见。三爻官鬼酉金持世，临酉月；动化午火回头克。子日冲去午火，书载丙子日得见。",
-    "source": "书例依据《增删卜易·月将章》，见项目 CASES.md 第 9 例。变爻六亲按本卦宫五行。",
+    "source": "书例依据《增删卜易·月将章》。变爻六亲按本卦宫五行。",
 }
 
 if __name__ == "__main__":
     page = ROOT / "templates" / "hexagram-view.html"
-    page.write_text(render_page(EXAMPLE, (ROOT / "gua.sql").read_text(encoding="utf-8-sig")), encoding="utf-8")
+    page.write_text(render_page(EXAMPLE, (ROOT / "database" / "gua.sql").read_text(encoding="utf-8-sig")), encoding="utf-8")

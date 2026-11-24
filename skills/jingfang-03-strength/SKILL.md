@@ -5,7 +5,9 @@ description: 分析原盘月建、日辰对世爻、用神、原神、忌神的�
 
 # 看日月，再看世用关系
 
-在空的 SQLite 数据库执行项目根目录的 `gua.sql`。已认卦后，以本卦全名查询 `SELECT * FROM hexagram_board WHERE name = ? ORDER BY position`，参数绑定卦名，初爻为 1、上爻为 6。已有本次查询结果时直接复用。
+在空的 SQLite 数据库执行项目的 `database/gua.sql`。已认卦后，以本卦全名查询 `SELECT * FROM hexagram_board WHERE name = ? ORDER BY position`，参数绑定卦名，初爻为 1、上爻为 6。已有本次查询结果时直接复用。
+
+`context.database` 可查 `v_yao` 和 `v_shi_ying`。原忌仇力度会在 strength 验收后自动写入 `yuanji_judge`；`v_yao.day_chong_hint` 只是暗动/日破候选，不得直接入库。对已定性的日冲结果、综合旺衰、飞伏取舍和世应结论，在判断条目中提交 `record_judgment`（`month_day_judge`、`yongshen_judge`、`shi_ying_judge`），便于后续步骤用结构化结果核对；自然语言判词仍以 Markdown 为准。查询库不可用时，继续使用本次 Markdown 和已有查表证据。
 
 用 shi_ying 定位世爻，按已选用神、原神、忌神的爻位取地支和五行；用神为伏神时读取 hidden_branch 和 hidden_element。月令旺衰查 `SELECT state, note FROM month_strength WHERE month_branch = ? AND element = ?`。月建、日辰对爻逐一查 `SELECT * FROM branch_interaction WHERE actor = ? AND target = ?`：wuxing 为生克比和，same_branch 为临，chong 为冲（月建冲即月破），he 为合，target_stage 为爻在该支的长生、帝旺、墓、绝。旬空查 `SELECT kong_1, kong_2 FROM jiazi WHERE ganzhi = ?`，参数为日辰干支。起卦月日及动静取自本次盘面。
 

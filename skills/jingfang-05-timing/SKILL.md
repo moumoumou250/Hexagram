@@ -5,7 +5,9 @@ description: 【v2 新增】在用神、旺衰、动变判定之后，按《增�
 
 # 定应期
 
-在空的 SQLite 数据库执行项目根目录的 `gua.sql`。已认卦后，以本卦全名查询 `SELECT * FROM hexagram_board WHERE name = ? ORDER BY position`，参数绑定卦名，初爻为 1、上爻为 6。已有本次查询结果时直接复用。
+在空的 SQLite 数据库执行项目的 `database/gua.sql`。已认卦后，以本卦全名查询 `SELECT * FROM hexagram_board WHERE name = ? ORDER BY position`，参数绑定卦名，初爻为 1、上爻为 6。已有本次查询结果时直接复用。
+
+`context.database` 可查主用神、逐爻和已记录的旺衰动变判断。应期通道如明确属于一爻，可在该条 `window` 的 `record_judgment` 中填写 `kong_po_judge.ying_qi_channel`，格式为地支、单位、间隔点和通道，例如 `申日·值`。完整窗口和置信度保存在 Markdown。 查询库不可用时，继续使用本次 Markdown 和已有查表证据。
 
 主事爻用第②步定的用神（自占多为世）；旺衰、空破、动静、变爻取自第③、④步。冲、合、值查 `SELECT * FROM branch_interaction WHERE target = ? AND (chong = 1 OR he = 1 OR same_branch = 1)`；长生、帝旺、墓、绝查 `SELECT stage, branch FROM changsheng WHERE element = ?`；出旬日期按 jiazi 的 seq 顺推到下一旬。
 

@@ -6,10 +6,11 @@ import sqlite3
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
+from . import records
 from .audit import audit_claims
 from .forces import build_windows, forces, sanhe_scan
 from .interpretation import apply_rules_fired, load_config
-from .journal import Journal
+from .journal import STATE_HEADER, Journal
 from .report import render, validate
 from .review import (
     facts, flagged_items, focus_choice, normalize_entries, outcome_choice, verdict_choice, words,
@@ -87,6 +88,31 @@ def reading_state(run):
     return "complete"
 
 
+def reading_stem(run):
+    """文件名主干：短时间戳 + 本卦名 + 变卦名。
+
+    认卦前还不知道卦名，先记待认卦；认卦提交后由 _save 重命名为本变卦名。
+    """
+    stamp = datetime.fromisoformat(run["created_at"]).strftime("%Y%m%d-%H%M")
+    chart = next((entry["detail"] for entry in run["entries"]
+                  if entry["kind"] == "fact" and entry["topic"] == "chart"), {})
+    base = run["input"].get("base_name") or chart.get("base_name")
+    if not base:
+        return f"{stamp}_待认卦"
+    changed = run["input"].get("changed_name") or chart.get("changed_name") or "待核"
+    return f"{stamp}_本{base}_变{changed}"
+
+
+def target_path(directory, stem, current=None):
+    """避开同一分钟内同名卦例的冲突，已在该文件时保持不动。"""
+    index = 1
+    while True:
+        target = directory / (f"{stem}.md" if index == 1 else f"{stem}-{index}.md")
+        if target == current or not target.exists():
+            return target
+        index += 1
+
+
 def timing_issue(run, evidence):
     if not run["input"]["ask_timing"]:
         return "本次未询问应期"
@@ -109,7 +135,6 @@ class Orchestrator:
         data = reading_input(payload)
         now = datetime.now(timezone(timedelta(hours=8)))
         run_id = uuid4().hex
-        path = self.directory / f"{now:%Y-%m-%d_%H-%M-%S}_{run_id}.md"
         run = {
             "id": run_id, "input": data, "revision": 1, "rule_version": freeze_rules(self.directory),
             "created_at": now.isoformat(timespec="seconds"),
@@ -117,11 +142,14 @@ class Orchestrator:
             "entries": [], "focus": None, "verdict": None, "interpretation": None,
             "outcomes": [], "force_overrides": {}, "history": [], "last_entry": 0,
         }
-        self._save(path, run)
-        return self._status(path, run)
+        path = target_path(self.directory, reading_stem(run))
+        return dict(self._status(path, run), **self._save(path, run))
 
     def _load(self, run_id):
-        path, run = self.journal.load(run_id)
+        return self._load_path(self.journal.find(run_id))
+
+    def _load_path(self, path):
+        run = self.journal.read(path)
         steps = run.get("steps")
         if (not isinstance(steps, dict) or set(steps) != set(STEPS)
                 or any(not isinstance(item, dict) or item.get("state") not in STATES for item in steps.values())):
@@ -155,6 +183,39 @@ class Orchestrator:
         path, run = self._load(run_id)
         return self._status(path, run)
 
+    def list_readings(self, state=None):
+        """Read-only inventory of Markdown journals. Does not sync or rewrite."""
+        allowed = {None, "running", "partial", "complete"}
+        if state not in allowed:
+            raise ValueError("list --state 只接受 running、partial 或 complete")
+        rows = []
+        for path in sorted(self.directory.glob("*.md")):
+            try:
+                text = path.read_text(encoding="utf-8")
+            except OSError:
+                continue
+            if STATE_HEADER not in text:
+                continue
+            try:
+                loaded, run = self._load_path(path)
+            except (ValueError, OSError, json.JSONDecodeError):
+                continue
+            status = self._status(loaded, run)
+            if state is not None and status["state"] != state:
+                continue
+            chart = next((entry["detail"] for entry in run["entries"]
+                          if entry["kind"] == "fact" and entry["topic"] == "chart"), {})
+            base = run["input"].get("base_name") or chart.get("base_name") or "待认卦"
+            changed = run["input"].get("changed_name") or chart.get("changed_name") or "待核"
+            rows.append({
+                "run_id": run["id"], "state": status["state"], "next": status["next"],
+                "base_name": base, "changed_name": changed, "chart": f"{base}→{changed}",
+                "created_at": run.get("created_at"), "cast_time": run["input"].get("cast_time"),
+                "path": str(loaded), "revision": run.get("revision"),
+                "rule_version": run.get("rule_version"),
+            })
+        return rows
+
     def context(self, run_id, step=None):
         _, run = self._load(run_id)
         step = next_step(run["steps"]) if step is None else step
@@ -173,6 +234,11 @@ class Orchestrator:
         if step == "synthesis":
             info["checks"] = flagged_items(evidence, run["focus"], (), run)
             info["claims"] = audit_claims(run)
+        try:
+            info["database"] = records.query(self.directory, run, step)
+        except (ValueError, OSError, sqlite3.Error) as error:
+            info["database"] = None
+            info["database_warning"] = str(error)
         return info
 
     def submit(self, run_id, step, payload):
@@ -185,19 +251,18 @@ class Orchestrator:
             path, run = self._load(run_id)
             current = run["steps"][step]
             if current.get("submission") == signature:
-                return dict(self._status(path, run), duplicate=True)
+                return dict(self._status(path, run), duplicate=True, **self._sync_record(run))
             self._expect(run, step)
             self._apply(run, step, payload, signature)
-            self._save(path, run)
-            return self._status(path, run)
+            return dict(self._status(path, run), **self._save(path, run))
 
     def outcome(self, run_id, payload):
         with self.journal.writer(run_id):
             path, run = self._load(run_id)
             record = outcome_choice(payload, run)
             run.setdefault("outcomes", []).append(record)
-            self._save(path, run)
-            return dict(self._status(path, run), outcome=record, outcomes=len(run["outcomes"]))
+            return dict(self._status(path, run), outcome=record, outcomes=len(run["outcomes"]),
+                        **self._save(path, run))
 
     def _apply(self, run, step, payload, signature):
         entries = run["entries"]
@@ -277,10 +342,10 @@ class Orchestrator:
             if step == "identify" and state == "blocked":
                 findings = []
             else:
-                findings = normalize_entries(payload, step, sources, visible, evidence, generated)
+                findings = normalize_entries(payload, step, sources, visible, evidence, generated, run.get("focus"))
             for _, _, _, detail, _ in findings:
                 if detail.get("force_override") is not None:
-                    run.setdefault("force_overrides", {})[detail["position"]] = {
+                    run.setdefault("force_overrides", {})[str(detail["position"])] = {
                         "force": detail["force_override"],
                         "override_reason": detail["override_reason"],
                     }
@@ -363,11 +428,60 @@ class Orchestrator:
             run.update(input=data, revision=run["revision"] + 1, focus=None, verdict=None,
                        interpretation=None, force_overrides={}, entries=[],
                        steps={step: {"state": "pending"} for step in STEPS})
-            self._save(path, run)
-            return self._status(path, run)
+            return dict(self._status(path, run), **self._save(path, run))
 
     def _save(self, path, run):
+        path = self._renamed(path, run)
         self.journal.save(path, run, render(run, self._status(path, run)))
+        return {"path": str(path), **self._sync_record(run)}
+
+    def _renamed(self, path, run):
+        """认卦后卦名才确定，此处把 Markdown 与同名 HTML 一起改名。"""
+        target = target_path(self.directory, reading_stem(run), path)
+        if target == path or not path.exists():
+            return target
+        path.replace(target)
+        for suffix in ("", "-dump"):
+            source = path.parent / "html" / f"{path.stem}{suffix}.html"
+            if source.is_file():
+                source.replace(source.parent / f"{target.stem}{suffix}.html")
+        return target
+
+    def _sync_record(self, run):
+        try:
+            records.sync(self.directory, run)
+        except (ValueError, OSError, sqlite3.Error) as error:
+            return {"database_warning": str(error)}
+        return {}
+
+    def backfill(self, apply=False):
+        result = {"mode": "apply" if apply else "dry-run", "counts": {}, "records": [],
+                  "legacy_databases": sorted(path.name for path in self.directory.glob("*.sqlite3")
+                                             if path.name != records.DB_NAME)}
+        for path in sorted(self.directory.glob("*.md")):
+            try:
+                if STATE_HEADER not in path.read_text(encoding="utf-8"):
+                    state, reason = "archive", "纯文本归档"
+                else:
+                    run_id = self.journal.read(path)["id"]
+                    with self.journal.writer(run_id):
+                        _, run = self._load_path(path)
+                        state, reason = records.eligibility(run)
+                        if state == "eligible":
+                            try:
+                                rule_source(self.directory, run["rule_version"])
+                            except (ValueError, OSError) as error:
+                                state, reason = "rules_unavailable", str(error)
+                            else:
+                                validate(run, self.directory)
+                                if apply:
+                                    state = records.sync(self.directory, run)
+            except (ValueError, OSError, sqlite3.Error) as error:
+                state, reason = "error", str(error)
+            counts = result["counts"]
+            counts[state] = counts.get(state, 0) + 1
+            result["records"].append({"file": path.name, "status": state, "reason": reason})
+        return result
 
     def export_html(self, run_id, allow_claims=False):
         from .view import reading_page

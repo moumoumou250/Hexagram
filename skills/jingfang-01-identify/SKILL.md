@@ -5,7 +5,9 @@ description: 从已有卦图辨认本卦、上下卦和动爻，由动爻推出�
 
 # 认卦
 
-在空的 SQLite 数据库执行项目根目录的 `gua.sql`。已认卦后，以本卦全名查询 `SELECT * FROM hexagram_board WHERE name = ? ORDER BY position`，参数绑定卦名，初爻为 1、上爻为 6。已有本次查询结果时直接复用。
+在空的 SQLite 数据库执行项目的 `database/gua.sql`。已认卦后，以本卦全名查询 `SELECT * FROM hexagram_board WHERE name = ? ORDER BY position`，参数绑定卦名，初爻为 1、上爻为 6。已有本次查询结果时直接复用。
+
+提交认卦后，程序按本卦冻结库交叉核对 `v_gua`、`v_yao`。有冲突，或本卦、动静、月建、日辰未齐时，本次资料先保存在 Markdown。 查询库不可用时，继续使用本次 Markdown 和已有查表证据。
 
 核对卦名与爻画后再查固定盘。仅知爻画时，以六位卦码查 `SELECT name FROM hexagram_code WHERE code = ?`；仅知上下卦时，按 hexagrams.upper_trigram 和 lower_trigram 定位卦名。另从 hexagrams 读取本卦宫、宫五行、卦序和六合六冲属性。变卦一律由动爻推出：`SELECT changed_name FROM hexagram_change WHERE base_name = ? AND move_mask = ?`。move_mask 为动爻组合，初爻1、二爻2、三爻4、四爻8、五爻16、上爻32 相加，无动爻为 0；例：初、二爻动为 3。也可按六爻写 `AND l1 = ? AND l2 = ? … AND l6 = ?`（动1静0）；旧写法 `moving_positions = '1,3'` 结果相同。图中标有变卦时反查核对：`SELECT move_mask, moving_positions FROM hexagram_change WHERE base_name = ? AND changed_name = ?`，与盘面动爻组合不等即为冲突。向后续步骤传递固定盘、问题、月建、日辰干支、动爻位次、move_mask 和推出的变卦。
 

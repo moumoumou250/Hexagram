@@ -5,7 +5,9 @@ description: 解读已有卦盘的明动爻、同位变爻，以及卦级的冲�
 
 # 看动爻、变爻
 
-在空的 SQLite 数据库执行项目根目录的 `gua.sql`。已认卦后，以本卦全名查询 `SELECT * FROM hexagram_board WHERE name = ? ORDER BY position`，参数绑定卦名，初爻为 1、上爻为 6。已有本次查询结果时直接复用。
+在空的 SQLite 数据库执行项目的 `database/gua.sql`。已认卦后，以本卦全名查询 `SELECT * FROM hexagram_board WHERE name = ? ORDER BY position`，参数绑定卦名，初爻为 1、上爻为 6。已有本次查询结果时直接复用。
+
+`context.database` 可用 `v_dong_effect` 核对明动对其他本爻的作用，用 `v_yao` 核对同位变化。真空/真破、化出效力、独发独静、原忌同动或贪生忘克、间爻阻隔等，在有明确依据时提交 `record_judgment` 到 `kong_po_judge`、`yuanji_judge` 或 `shi_ying_judge`；不强制提交，缺项仍可从 Markdown 查阅。查询库不可用时，继续使用本次 Markdown 和已有查表证据。
 
 动爻取自本次盘面，用第①步的 move_mask（初1、二2、三4、四8、五16、上32 相加）。爻级查 `SELECT * FROM change_board WHERE base_name = ? AND move_mask = ? ORDER BY position`：每行为一个动爻，changed_relative 为按本卦宫五行定的变爻六亲（动变章“仍照正卦而推”；changed_relative_own_palace 仅供对照，不用），huitou 为变爻对本爻的回头生、回头克、比和、动生变、动克变，hua_chong 为化回头冲，hua_he 为化合（化扶），jin_tui 为进神退神，hua_stage 为化长生、化帝旺、化墓、化绝，fuyin_line 为变支同本支，line_fanfu 为爻之反吟（化冲）或伏吟，shi_ying 标世应。卦级查 `SELECT * FROM hexagram_change WHERE base_name = ? AND move_mask = ?`：relation_change、inner_fanfu、outer_fanfu、gua_change、gua_fanyin（卦之反吟）。两表均已按本卦 + 动爻组合预先算好；旧写法按 `base_name = ? AND changed_name = ?` 查，结果相同。查不到行或 changed_name 与第①步不符时，回第①步核对动爻。
 

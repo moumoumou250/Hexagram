@@ -12,6 +12,34 @@ OUTCOME_RESULTS = {"met", "partial", "unmet", "unresolved"}
 LAYER_STATUS_LABEL = {"met": "已备", "waiting": "待时", "unlikely": "难成"}
 OUTCOME_LAYER_LABEL = {"met": "应", "partial": "部分", "unmet": "未应", "unresolved": "未决"}
 DIRECTION_LABEL = {"favorable": "偏吉", "unfavorable": "偏凶", "mixed": "吉凶交错"}
+LINE_LAYERS = {"base": "本", "changed": "变", "hidden": "伏"}
+RECORD_FIELDS = {
+    "yongshen_judge": {
+        "select_reason": str, "fu_can_emerge": bool, "fu_reason": str, "ke_chu_feng_sheng": bool,
+        "san_he_ju": str, "strength": ("旺", "有气", "衰而有救", "衰", "无用"),
+    },
+    "yuanji_judge": {
+        "tan_sheng_wang_ke": bool, "yuan_ji_tong_dong": bool, "can_act_on_yong": bool,
+        "effective_force": ("有力", "无力", "中和"), "force_reason": str,
+    },
+    "month_day_judge": {
+        "day_chong_result": ("暗动", "日破", "冲散", "冲起", "冲开"),
+        "overall": ("旺", "有气", "衰", "无用"),
+    },
+    "kong_po_judge": {
+        "kong_nature": ("真空", "不为空", "待出空"), "po_nature": ("真破", "待出月填实"),
+        "hua_effect": str, "du_fa_du_jing": ("独发", "独静"), "ying_qi_channel": str,
+    },
+    "shi_ying_judge": {
+        "sui_gui_ru_mu": bool, "yong_to_shi": str, "jian_yao_block": bool, "shi_ying_judge": str,
+    },
+}
+RECORD_TABLES = {
+    "focus": {"yongshen_judge"},
+    "strength": {"yongshen_judge", "yuanji_judge", "month_day_judge", "shi_ying_judge"},
+    "change": {"kong_po_judge", "yuanji_judge", "shi_ying_judge"},
+    "timing": {"kong_po_judge"},
+}
 
 
 def words(value, label):
@@ -81,6 +109,75 @@ def focus_choice(submitted, facts, state):
     if state == "accepted" and primary is None:
         raise ValueError("完成取用神需给出主用神。候选待定可提交 partial")
     return {"relative": relative, "candidates": options, "primary": primary, "roles": roles}
+
+
+def record_judgment(value, step, topic, detail, evidence, focus):
+    if not isinstance(value, dict) or not isinstance(value.get("table"), str):
+        raise ValueError("record_judgment 应为含 table 和 fields 的对象")
+    table = value["table"]
+    fields = value.get("fields")
+    if (table not in RECORD_TABLES.get(step, ()) or not isinstance(fields, dict) or not fields
+            or fields.keys() - RECORD_FIELDS[table].keys()):
+        raise ValueError("record_judgment 的表或判断字段不适用于本步骤")
+    if step == "focus" and fields.keys() != {"select_reason"}:
+        raise ValueError("取用步骤的候选记录只填写 select_reason")
+    if step == "timing":
+        channel = f"{detail.get('branch')}{detail.get('unit')}·{detail.get('channel')}"
+        if topic != "window" or fields != {"ying_qi_channel": channel}:
+            raise ValueError(f"应期记录仅可为本条通道填写 ying_qi_channel（{channel}）")
+    position = value.get("position")
+    if type(position) is not int:
+        raise ValueError("record_judgment.position 应为整数")
+    chart = evidence.get("chart", {})
+    key = {"position": position}
+    if table == "shi_ying_judge":
+        item = value.get("item")
+        shi, ying = sorted((chart["shi_line"], chart["ying_line"]))
+        if not ((item in ("世", "应") and position == 0) or (item == "间爻" and shi < position < ying)):
+            raise ValueError("世应判断应填世或应（位置 0），间爻应在世应之间")
+        key["item"] = item
+    else:
+        source = value.get("source")
+        if source not in tuple(LINE_LAYERS):
+            raise ValueError("record_judgment.source 应为 base、changed 或 hidden")
+        if source == "changed":
+            lines = rows(evidence.get("moves", {}), "change_board")
+            relative = next((row["changed_relative"] for row in lines if row["position"] == position), None)
+        else:
+            column = "hidden_relative" if source == "hidden" else "relative"
+            relative = next((row[column] for row in rows(chart, "hexagram_board")
+                             if row["position"] == position), None)
+        if relative is None:
+            raise ValueError("record_judgment 的爻层或爻位在本卦不存在")
+        key["layer"] = LINE_LAYERS[source]
+        focus = focus or {}
+        if table == "yongshen_judge" and not any(
+            row["source"] == source and row["position"] == position for row in focus.get("candidates", ())
+        ):
+            raise ValueError("用神判断的爻位和来源须在本次候选中")
+        if table == "yuanji_judge":
+            role = value.get("shen_type")
+            column = {"原神": "yuanshen", "忌神": "jishen", "仇神": "choushen"}.get(role) if isinstance(role, str) else None
+            if column is None or (focus.get("roles") or {}).get(column) != relative:
+                raise ValueError("原忌仇判断的角色与该爻的六亲不符")
+            key["shen_type"] = role
+        if topic == "moving_line" and detail.get("position") != position:
+            raise ValueError("动爻判断的爻位与本条明动记录不符")
+    identity = (set(value) - {"table", "fields", "position"})
+    target = {"item"} if table == "shi_ying_judge" else {"source"}
+    if table == "yuanji_judge":
+        target.add("shen_type")
+    if identity != target:
+        raise ValueError("record_judgment 的位置标识字段不适用于该表")
+    clean = {}
+    for name, field in fields.items():
+        expected = RECORD_FIELDS[table][name]
+        if expected is str:
+            field = words(field, name)
+        elif (expected is bool and type(field) is not bool) or (isinstance(expected, tuple) and field not in expected):
+            raise ValueError(f"record_judgment.{name} 的值无效")
+        clean[name] = field
+    return {"table": table, "key": key, "fields": clean}
 
 
 def flagged_items(evidence, focus, steps, run=None):
@@ -240,7 +337,7 @@ def outcome_choice(payload, run):
             "supplemental_layers": extras, "note": note}
 
 
-def normalize_entries(payload, step, sources, visible, evidence, generated_refs):
+def normalize_entries(payload, step, sources, visible, evidence, generated_refs, focus=None):
     entries = payload.get("entries", [])
     if not isinstance(entries, list) or any(not isinstance(entry, dict) for entry in entries):
         raise ValueError("entries 应为对象数组")
@@ -343,5 +440,9 @@ def normalize_entries(payload, step, sources, visible, evidence, generated_refs)
                     raise ValueError("force_override 需同时提供 position")
                 detail.update(force_override=override, override_reason=words(entry.get("override_reason"), "力度覆写原因"),
                               position=position)
+            if "record_judgment" in entry:
+                detail["record_judgment"] = record_judgment(entry["record_judgment"], step, topic, detail, evidence, focus)
+        elif "record_judgment" in entry:
+            raise ValueError("仅判断条目可填写 record_judgment")
         findings.append((kind, topic, summary, detail, refs))
     return findings

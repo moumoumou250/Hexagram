@@ -1,0 +1,48 @@
+{
+  "state": "accepted",
+  "skill_use": "applied",
+  "entries": [
+    {
+      "kind": "judgment",
+      "topic": "strength",
+      "summary": "主用神即世爻三爻官鬼辛酉金，酉月临月建为旺，帝旺于月；日辰寅木于金为绝地，旺相遇绝论生不论绝，反是酉金克寅木；用神持世，世用同位",
+      "rule": "临月建为旺；只用长生、帝旺、墓、绝四位；旺相遇绝论生不论绝；用神持世则世用一体",
+      "section": "操作",
+      "condition": "月建酉、日辰丙寅，用神为上卦三爻酉金",
+      "refs": [9, 10, 12],
+      "position": 3,
+      "force_override": "有力",
+      "override_reason": "程序默认因化回头克判为无力，与临月建旺相、有根不符；回头克属动变之伤，留待动变步处理"
+    },
+    {
+      "kind": "judgment",
+      "topic": "strength",
+      "summary": "原神为土，一爻辛丑、四爻丙戌两现，酉月土休囚，日辰寅木克丑、克戌，两爻皆静，无力生用；四爻戌土又落旬空（戌、亥空）",
+      "rule": "原神休囚不动、休囚又空破者不能生用；月令旺衰按 month_strength，酉月土休囚",
+      "section": "操作",
+      "condition": "所取用神为官鬼金，原神为妻财土",
+      "refs": [9, 10, 12]
+    },
+    {
+      "kind": "judgment",
+      "topic": "strength",
+      "summary": "忌神子孙火不上卦，只五爻父母子水下伏辛巳火，飞神子水克伏，伏神受制；仇神兄弟寅木居六爻临应，又临日辰，克原神之土而生忌神之火，仇神有力",
+      "rule": "伏神受飞神克为受制；仇神克原神而生忌神；爻临日辰为旺",
+      "section": "操作",
+      "condition": "忌神子孙、仇神兄弟在本卦的取位与伏神位置按固定盘",
+      "refs": [9, 10, 12],
+      "position": 6,
+      "force_override": "有力",
+      "override_reason": "六爻寅木临日辰，程序只按酉月木休囚判无力，未计临日辰"
+    },
+    {
+      "kind": "judgment",
+      "topic": "strength",
+      "summary": "世在三爻官鬼酉金，应在六爻兄弟寅木，金克木为世克应；世临月建、应临日辰，两皆有气",
+      "rule": "以 shi_ying 定位世应；世克应、应克世按五行生克",
+      "section": "操作",
+      "condition": "本卦世三应六",
+      "refs": [10, 12]
+    }
+  ]
+}

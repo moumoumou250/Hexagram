@@ -7,6 +7,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 ROOT = Path(__file__).resolve().parents[1]
+LIVE_SQL = ROOT / "database" / "gua.sql"
 SKILLS = {
     "identify": "jingfang-01-identify",
     "focus": "jingfang-02-focus",
@@ -37,7 +38,7 @@ def rule_version(contents):
 
 
 def freeze_rules(log_dir):
-    contents = {name: (ROOT / name).read_bytes() for name in RULE_FILES}
+    contents = live_rules()
     version = rule_version(contents)
     parent = log_dir / "rule-versions"
     parent.mkdir(parents=True, exist_ok=True)
@@ -74,7 +75,7 @@ def rule_source(log_dir, version):
         if rule_version(contents) != version:
             raise ValueError("本次规则副本的内容与版本指纹不符")
         return contents
-    live = {name: (ROOT / name).read_bytes() for name in RULE_FILES}
+    live = live_rules()
     if rule_version(live) == version:
         return live
     # A Windows checkout may change text line endings. Accept only an exact hash match.
@@ -83,6 +84,11 @@ def rule_source(log_dir, version):
         if rule_version(candidate) == version:
             return candidate
     raise ValueError("规则副本不可读取，且当前规则已不是该版本，无法复算")
+
+
+def live_rules():
+    return {name: (LIVE_SQL if name == "gua.sql" else ROOT / name).read_bytes()
+            for name in RULE_FILES}
 
 
 def chart_fields(data):

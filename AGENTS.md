@@ -10,11 +10,12 @@
 
 - 每次向求测者交付解读时，以 `templates/hexagram-view.html` 为默认模板，运行 `python -X utf8 -m jingfang export <解卦编号> --html` 生成到 `reading-logs/html/`，与该次 Markdown 同名、扩展名为 `.html`。页面可离线直接查看，只展示本次卦例。保留世应标记、六爻对照和判断依据区，依照已校验的记录填入问题、日月、动爻、主用神和白话结论。资料不足时显示已确认内容和待核项。交付前打开成品核对，答复优先链接用户版 HTML，Markdown 留作本地复核。
 
-- 由当前主会话执行全部步骤。从项目根目录运行 `python -X utf8 -m jingfang start <输入.json>`，取得解卦编号和 Markdown 路径，记录此时已经创建。输入至少含 `question`（所问问题）和 `source`（原图来源或文字转录来源）。已知时可填写 `base_name`、`line_code`、`moving_positions`、`changed_name`、`changed_code`、`month_branch`、`day_ganzhi`、`day_branch`、`cast_time`、`timezone`。明确静卦用空数组，动爻未知时省略该字段。按所问设置 `ask_timing`，有明确比较对象才填 `comparison_targets`。
+- 由当前主会话执行全部步骤。从项目根目录运行 `python -X utf8 -m jingfang start <输入.json>`，取得解卦编号和 Markdown 路径，记录此时已经创建。文件名以起卦分钟的短时间戳加本卦、变卦命名（如 `20261124-1323_本兑为泽_变雷水解.md`）；输入未给卦名时先记作 `待认卦`，认卦提交后自动改名。输入至少含 `question`（所问问题）和 `source`（原图来源或文字转录来源）。已知时可填写 `base_name`、`line_code`、`moving_positions`、`changed_name`、`changed_code`、`month_branch`、`day_ganzhi`、`day_branch`、`cast_time`、`timezone`。明确静卦用空数组，动爻未知时省略该字段。按所问设置 `ask_timing`，有明确比较对象才填 `comparison_targets`。
 - 严格按照 **认卦查 SQL → 取用神 → 看日月、世应和世用 → 看动变 → 按需看应期 → 汇总答复** 顺序执行。对应步骤名为 `identify`、`focus`、`strength`、`change`、`timing`、`synthesis`。用 `next <解卦编号>` 查下一步，`context <解卦编号>` 取当步冻结版 Skill 路径和上游证据，实际处理后用 `submit <解卦编号> <步骤> <结果.json>` 提交。输入文件和结果文件也可用 `-` 从标准输入读取。
 - 每步提交会重新生成并原子替换同一份 UTF-8 Markdown，只有校验和写入成功后才进入下一步。用 `status <解卦编号>` 查看已保存状态，中断后用同一编号继续。复算冲突写入 `identify` 并停止。其他缺项用 `partial` 记下可确认内容和待核项。汇总时根据当步 `context` 提示复核用神取舍、冲合与动变例外。
+- `context.database` 可用于交叉核对本卦的查询结果。为 `null` 时，使用 `context.entries` 的证据；提交引用仍填其中的条目编号。只在规则和盘面足以定性时填写判断条目的可选 `record_judgment`，字段见 [数据映射](database/现有数据映射.md)。
 - 卦图清晰时，可用 `source_void` 记录图上两个旬空地支，用 `source_lines` 转录各爻。每项必填 `position`，按图选择填写 `stem_branch`、`relative`、`marker`、`hidden`、`spirit`、`moving`、`changed_stem_branch` 和 `changed_relative`。变爻干支与六亲只填明动爻。
-- 固定盘、动变及其他可查表规则取自该次冻结的 `gua.sql`。未汇总的记录可用 `revise <解卦编号> <更正后的完整输入.json> <原因>` 更正输入，原日志保留更正历史并从认卦重走。已汇总的卦例如需重新判断，用 `start` 创建新记录。旧卦例可直接查阅历史 Markdown。
+- 固定盘、动变及其他可查表规则取自该次冻结的 `gua.sql`（新记录从 `database/gua.sql` 创建快照）。未汇总的记录可用 `revise <解卦编号> <更正后的完整输入.json> <原因>` 更正输入，原日志保留更正历史并从认卦重走。已汇总的卦例如需重新判断，用 `start` 创建新记录。旧卦例可直接查阅历史 Markdown。
 
 ### 步骤提交约定
 
@@ -59,7 +60,7 @@
 
 答复用户前运行 `python -X utf8 -m jingfang validate <解卦编号>` 和 `python -X utf8 -m jingfang export <解卦编号>`，核对返回路径与记录内容，并附上本地链接。交付用户版时再 `export --html`；若摘要盘面断言冲突，先修正或显式 `--allow-claims`。中断时也执行导出。若续跑状态无法恢复，可用 `python -X utf8 -m jingfang.save_reading_log <临时Markdown路径>` 保存已经确认的部分并记录故障。
 
-准确性校准材料（不阻断解卦）：`docs/verification/forces-conflicts.md`（元忌力度对照）、`docs/verification/window-replay.md`（应期窗口回放清单）。调规则前先跑 `python -X utf8 verify/workflow/forces_check.py` 与 `window_check.py` 刷新。
+准确性校准材料（不阻断解卦）：调规则前运行 `python -X utf8 tests/workflow/forces_check.py` 与 `window_check.py`，输出会写入 `docs/verification/`（元忌力度对照、应期窗口回放清单），按需重新生成。
 
 ## 个案与通用规则
 

@@ -23,21 +23,39 @@ class Journal:
         if not isinstance(run_id, str) or not re.fullmatch(r"[0-9a-f]{32}", run_id):
             raise ValueError("解卦编号应为 32 位小写十六进制字符")
 
-    def load(self, run_id):
-        self._check_id(run_id)
-        matches = list(self.directory.glob(f"*_{run_id}.md"))
-        if len(matches) != 1:
-            raise ValueError(f"找不到唯一的解卦记录 {run_id}")
-        path = matches[0]
+    @staticmethod
+    def read(path):
+        """读取一份 Markdown 内嵌的续跑状态。
+
+        文件名只装载时间戳和本变卦名，解卦编号以状态块为准，因此不再由文件名反推。
+        """
         _, marker, state = path.read_text(encoding="utf-8").rpartition(STATE_HEADER)
-        if not marker and (self.directory / "blackboard.sqlite3").is_file():
-            raise ValueError(f"这是历史归档，可直接查看 {path}")
         if not marker or not state.endswith(STATE_END):
             raise ValueError("Markdown 的续跑状态缺失或格式无效")
         run = json.loads(state.removesuffix(STATE_END))
-        if not isinstance(run, dict) or run.get("id") != run_id:
-            raise ValueError("Markdown 内的解卦编号与文件名不一致")
-        return path, run
+        if not isinstance(run, dict) or not isinstance(run.get("id"), str):
+            raise ValueError("Markdown 内的续跑状态不含解卦编号")
+        return run
+
+    def find(self, run_id):
+        self._check_id(run_id)
+        matches = [path for path in sorted(self.directory.glob("*.md"))
+                   if self._identifies(path, run_id)]
+        if len(matches) != 1:
+            if not matches and (self.directory / "blackboard.sqlite3").is_file():
+                raise ValueError(f"这是历史归档，可直接查看；找不到解卦记录 {run_id}")
+            raise ValueError(f"找不到唯一的解卦记录 {run_id}")
+        return matches[0]
+
+    def _identifies(self, path, run_id):
+        try:
+            return self.read(path).get("id") == run_id
+        except (OSError, ValueError):
+            return False
+
+    def load(self, run_id):
+        path = self.find(run_id)
+        return path, self.read(path)
 
     @staticmethod
     def save(path, run, markdown):

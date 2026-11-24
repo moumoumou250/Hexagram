@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-src = (ROOT / 'verify' / 'fixtures' / 'gua_v1.sql').read_text(encoding='utf-8')
+src = (ROOT / 'tests' / 'fixtures' / 'gua_v1.sql').read_text(encoding='utf-8')
 
 def q(s): return "'" + str(s).replace("'", "''") + "'"
 def rows(vals): return ',\n'.join('(' + ', '.join(q(v) if isinstance(v, str) else ('NULL' if v is None else str(v)) for v in r) + ')' for r in vals)
@@ -474,7 +474,7 @@ TRANS_ROWS = ''.join(f"-- {hid} {HEX[hid]['name']}（{HEX[hid]['palace']}宫{HEX
 TRANS_DDL = """
 -- ======================================================================
 -- 二、动变预计算（v3）：本卦 + 动爻组合 move_mask（0–63，初爻=bit0）→ 变卦与每个动爻的变化。
--- 只收固定部分；化空、化破、日月作用随每次起卦而定，不在此。生成：verify/build_gua_sql.py；核对：verify/oracle_v3.py
+-- 只收固定部分；化空、化破、日月作用随每次起卦而定，不在此。生成：tests/build_gua_sql.py；核对：tests/sql/oracle_v3.py
 -- ======================================================================
 CREATE TABLE hexagram_transition (  -- 动变章第七：动则必变，诸动爻同时变，得一个之卦；move_mask=0 为静卦
     hexagram_id         INTEGER NOT NULL REFERENCES hexagrams(hexagram_id),
@@ -631,7 +631,7 @@ def main():
     parser = argparse.ArgumentParser(description='生成或检查当前排盘 SQL')
     parser.add_argument('--check', action='store_true', help='比对生成内容，跳过写入')
     args = parser.parse_args()
-    path = ROOT / 'gua.sql'
+    path = ROOT / 'database' / 'gua.sql'
     if args.check:
         if path.read_text(encoding='utf-8') != out:
             parser.exit(1, 'gua.sql 与生成结果不一致\n')

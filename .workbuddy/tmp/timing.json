@@ -1,0 +1,37 @@
+{
+  "state": "accepted",
+  "skill_use": "applied",
+  "entries": [
+    {
+      "kind": "judgment",
+      "topic": "window",
+      "branch": "子",
+      "unit": "日",
+      "summary": "用神酉金旺而受本位变爻午火回头克，取克神受克之日，子水冲克午火，首选子日",
+      "rule": "大象吉而受克，待克神受克之日；亦可取冲去伤爻之日",
+      "section": "操作",
+      "condition": "用神有根而受回头克，克神为变爻午火",
+      "refs": [
+        11,
+        12,
+        17
+      ],
+      "channel": "克神受克"
+    },
+    {
+      "kind": "judgment",
+      "topic": "window",
+      "branch": "辰",
+      "unit": "日",
+      "summary": "次选辰日：辰与酉合，用神动而逢合，且辰土生酉金，合而带生，惟须午火先受制",
+      "rule": "动而逢值、逢合；从合处取应期",
+      "section": "操作",
+      "condition": "用神为动爻，辰酉六合",
+      "refs": [
+        11,
+        12
+      ],
+      "channel": "合"
+    }
+  ]
+}

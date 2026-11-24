@@ -61,36 +61,56 @@ th{background:#edf0e7;color:#41564b;font-weight:bold;font-size:13px}
 .chart-table tr:is(.role-shi,.role-ying) > :first-child{box-shadow:inset 3px 0 var(--role-ink);color:var(--role-ink)}
 .chart-table tr.moving:is(.role-shi,.role-ying) .changed-line{background:#fbefe6}
 .analysis{margin-top:16px}
-.summary{background:#e9eee4;border-left:4px solid #416955;padding:13px 16px;border-radius:0 9px 9px 0}
-.summary h4{margin:0 0 4px;color:#365548;font-size:13px}
-.summary p{font-size:clamp(16px,2.4vw,21px);font-weight:700;line-height:1.5}
+.summary{background:#eef2e9;border-top:1px solid var(--line);padding:14px 18px}
+.summary h4{margin:0 0 4px;color:#365548;font-size:12px;font-weight:400}
+.summary p{font-size:clamp(16px,2.4vw,19px);font-weight:700;line-height:1.5}
+.summary .hint{display:block;font:400 12px/1.6 "Microsoft YaHei",sans-serif;color:var(--muted);margin-top:4px}
 .reason{min-width:0;padding:14px 16px;border:1px solid var(--line);border-radius:9px}
 .reason h3{font-size:19px;margin-bottom:5px}
-.evidence{white-space:nowrap}
-.evidence td{vertical-align:top}
-.evidence .detail{display:block;color:var(--muted);font-size:12px}
 .interpretation{margin-top:12px}
 .reading-section{margin-top:18px}
 .reading-section h4{font-size:17px;margin:0 0 8px}
-#key-points-block{border:1px solid #d8e1d5;border-radius:10px}
-.key-points{min-width:680px;font-size:13px;line-height:1.5}
-.key-points thead th{background:#28493d;color:#fffdf7;font-weight:600;white-space:nowrap}
-.key-points th,.key-points td{padding:10px 11px;vertical-align:middle}
-.key-points tbody th{background:var(--card);color:var(--ink);white-space:nowrap}
-.key-points tbody tr:nth-child(even) > *{background:#f7f8f2}
-.key-points tbody tr[data-role="用神"] > *{background:#e9f0e6}
-.key-points tbody tr[data-role="用神"] th{box-shadow:inset 3px 0 #487259}
-.key-points tbody tr:last-child > *{border-bottom:0}
-.key-points .object-name{font-weight:600}
-.key-points .force-status{display:inline-block;border-radius:4px;padding:2px 6px;background:#edf0e9;color:#44564d;font-weight:700}
-.key-points .force-status[data-force="有力"]{background:#dceadf;color:#224e34}
-.key-points .force-status[data-force="无力"],.key-points .force-status[data-limited]{background:#f5ebd8;color:#744823}
-.matrix-scroll-hint{display:none;margin-top:6px}
-@media(max-width:760px){.key-points tr > :first-child{position:sticky;left:0;z-index:1}.key-points tr[data-role="用神"] th{box-shadow:inset 3px 0 #487259,1px 0 #d8e1d5}#key-points-block:not([hidden])+.matrix-scroll-hint{display:block}}
-.basis-list{margin:0;border-top:1px solid var(--line)}
-.basis-list div{display:grid;grid-template-columns:4.5em minmax(0,1fr);gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
-.basis-list dt{font-weight:700;color:var(--jade)}
-.basis-list dd{margin:0;overflow-wrap:anywhere}
+.sec-note{margin:0;color:var(--muted);font-size:12.5px}
+.items{display:grid;gap:10px}
+.item{display:grid;grid-template-columns:150px 1fr;gap:14px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#fffef9}
+.item[data-key="用神"]{background:#f2f7ef;border-color:#c7d8c6;box-shadow:inset 3px 0 #487259}
+.item[data-key="世"],.item[data-key="应"]{background:#fbf7ec;border-color:#e3d9c2}
+.item-h{display:flex;flex-direction:column;gap:6px}
+.item .tag{font-size:13px;font-weight:700;color:var(--jade)}
+.item .obj{font-size:12.5px;color:var(--muted)}
+.item .state{align-self:flex-start;display:inline-block;padding:1px 8px;border-radius:4px;font-size:12px;font-weight:700;background:#eceee6;color:#42544a}
+.item .state[data-f="有力"],.item .state[data-f="旺"],.item .state[data-f="有气"],.item .state[data-f="衰而有救"]{background:#dfeee4;color:#1f5138}
+.item .state[data-f="无力"],.item .state[data-f="衰"],.item .state[data-f="无用"]{background:#f7edd9;color:#8a5a1e}
+.item ul{margin:0;padding-left:1.15em;font-size:14px;line-height:1.7}
+.item li+li{margin-top:3px}
+.line-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:11px;background:var(--card)}
+.line-table{border-collapse:separate;border-spacing:0;width:100%;min-width:1160px;font-size:12.5px;line-height:1.45}
+.line-table thead th{position:sticky;top:0;background:#28493d;color:#fffdf7;font-weight:600;text-align:left;padding:9px 8px;white-space:nowrap;font-size:12px;border-bottom:0}
+.line-table thead th small{display:block;font-weight:400;color:#c9d6cd;font-size:10.5px}
+.line-table tbody th,.line-table tbody td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+.line-table tbody th{position:sticky;left:0;z-index:2;background:var(--card);text-align:left;font-weight:700}
+.line-table tbody tr:nth-child(even) th,.line-table tbody tr:nth-child(even) td{background:#f8f8f2}
+.line-table tr[data-key="用神"] th,.line-table tr[data-key="用神"] td{background:#e9f0e6!important}
+.line-table tr[data-key="用神"] th{box-shadow:inset 3px 0 #487259}
+.line-table tr[data-key="世"] th,.line-table tr[data-key="世"] td,
+.line-table tr[data-key="应"] th,.line-table tr[data-key="应"] td{background:#faf5e8!important}
+.pos b{font-size:13px}
+.pos i{display:block;font-style:normal;color:var(--muted);font-size:10.5px}
+.mv{display:inline-block;padding:0 5px;border-radius:4px;background:#f1d8ca;color:#86341f;font-weight:700;font-size:11.5px}
+.badge{display:inline-block;padding:0 5px;border-radius:4px;font-size:11.5px;font-weight:700;background:#e6eee2;color:#345344}
+.badge.role{background:#24483c;color:#fffdf7}
+.badge.warn{background:#f7edd9;color:#8a5a1e}
+.void-cell{color:#8a5a1e;font-weight:700}
+.dash{color:#a9b3ab}
+.sub{display:block;font-weight:400;font-size:10.5px;color:#8b978f;margin-top:1px}
+.force{display:inline-block;padding:2px 7px;border-radius:5px;font-weight:700;font-size:12px;background:#eceee6;color:#4b5a51}
+.force[data-f="有力"],.force[data-f="旺"],.force[data-f="有气"],.force[data-f="衰而有救"]{background:#dfeee4;color:#1f5138}
+.force[data-f="无力"],.force[data-f="衰"],.force[data-f="无用"]{background:#f7edd9;color:#8a5a1e}
+.force[data-f="待核"]{background:#eceee6;color:#4b5a51}
+.force small{font-weight:400;opacity:.85}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:9px 2px 0;font-size:12px;color:var(--muted)}
+.legend b{color:var(--ink);font-weight:700}
+.matrix-scroll-hint{display:none;margin-top:6px;font-size:12px;color:var(--muted)}
 .compact-list{margin:6px 0 0;padding-inline-start:1.25em}
 .compact-list li+li{margin-top:4px}
 .verdict-layers{display:grid;gap:7px;list-style:none;margin:0;padding:0}
@@ -102,13 +122,13 @@ th{background:#edf0e7;color:#41564b;font-weight:bold;font-size:13px}
 .layer-condition{display:block;color:var(--muted);margin-top:2px}
 .falsifier{margin-top:8px;padding:9px 11px;border:1px solid #e8cdbf;border-left:3px solid var(--rust);border-radius:0 7px 7px 0;background:#fbf2ea}
 .falsifier strong{display:block;color:#86341f}
-.review-details,#strength-reading,#summary-pending{margin-top:10px}
+.review-details,#summary-pending,#table-gaps{margin-top:10px}
 .review-details summary{cursor:pointer;color:var(--jade);font-weight:bold}
 .review-details[open] summary{margin-bottom:8px}
 .source{margin-top:12px;color:var(--muted);font-size:12px}
 [hidden]{display:none!important}
-@media(max-width:760px){main{padding:14px 12px 30px}.hero{padding:18px 15px;gap:10px}.identity{gap:7px}.hero h1,.hero h2{letter-spacing:0;font-size:clamp(17px,4.6vw,29px)}.hero p{font-size:11px}.symbol .bar{width:26px;height:4px}.symbol{gap:4px}.chart-body,.analysis{padding:14px}.reason{padding:10px}.brand{font-size:19px}.jump{font-size:13px;padding:5px 8px}.chart-table th,.chart-table td{padding:7px 5px}.line-name{gap:5px}.line-name .bar{width:24px}.role-badge,.marker{padding-inline:4px}}
-@media print{body{background:white}main{max-width:none;padding:0}.jump{display:none}.panel{break-inside:avoid}.hero{print-color-adjust:exact}}
+@media(max-width:760px){main{padding:14px 12px 30px}.hero{padding:18px 15px;gap:10px}.identity{gap:7px}.hero h1,.hero h2{letter-spacing:0;font-size:clamp(17px,4.6vw,29px)}.hero p{font-size:11px}.symbol .bar{width:26px;height:4px}.symbol{gap:4px}.chart-body,.analysis{padding:14px}.reason{padding:10px}.brand{font-size:19px}.jump{font-size:13px;padding:5px 8px}.chart-table th,.chart-table td{padding:7px 5px}.line-name{gap:5px}.line-name .bar{width:24px}.role-badge,.marker{padding-inline:4px}.item{grid-template-columns:1fr;gap:8px}.matrix-scroll-hint{display:block}.line-table tbody th{box-shadow:1px 0 #d8e1d5}}
+@media print{body{background:white}main{max-width:none;padding:0}.jump{display:none}.panel{break-inside:avoid}.hero{print-color-adjust:exact}.line-table{min-width:0}}
 </style>
 </head>
 <body>
@@ -128,50 +148,53 @@ th{background:#edf0e7;color:#41564b;font-weight:bold;font-size:13px}
     </section>
   </article>
   <section class="panel analysis" id="analysis" aria-labelledby="analysis-title">
-    <div class="section-title"><h2 id="analysis-title">关键判断与依据</h2><p class="muted" id="case-label"></p></div>
-    <article class="reason">
-      <h3 id="strength-title">月日与旺衰</h3>
-      <div class="scroll" tabindex="0" role="region" aria-labelledby="strength-title">
-        <table class="evidence" id="strength">
-          <thead><tr><th scope="col">爻位与纳甲</th><th scope="col">角色</th><th scope="col">月令</th><th scope="col">月建对爻</th><th scope="col">日辰对爻</th><th scope="col">旬空</th></tr></thead>
+    <div class="section-title"><h2 id="analysis-title">解读</h2><p class="muted" id="case-label"></p></div>
+    <section class="summary" aria-labelledby="inferred-title">
+      <h4 id="inferred-title">用神状态</h4>
+      <p id="summary"></p>
+      <span class="hint">只讲用神现在的状态，不判断所问事情的结局。</span>
+    </section>
+    <p class="muted" id="summary-pending" hidden></p>
+    <article class="reason interpretation" aria-labelledby="items-title">
+      <div class="section-title"><h3 id="items-title">① 用神盘面要点</h3><p class="sec-note">每条按「谁 · 现在怎样 · 为什么」说一遍</p></div>
+      <div class="items" id="items"></div>
+      <p class="muted" id="items-empty" hidden>盘面要点待核。</p>
+    </article>
+    <article class="reason interpretation" aria-labelledby="table-title">
+      <div class="section-title"><h3 id="table-title">② 六爻判断表</h3><p class="sec-note">上爻在上，初爻在下 · 一列只回答一个问题</p></div>
+      <div class="line-scroll" tabindex="0" role="region" aria-labelledby="table-title">
+        <table class="line-table" id="line-table">
+          <thead><tr>
+            <th>爻位</th><th>对象<small>动 / 静</small></th><th>六亲</th><th>地支五行</th>
+            <th>属性<small>用/原/忌/仇/世/应</small></th><th>月建影响<small>做了什么</small></th><th>日辰影响<small>做了什么</small></th>
+            <th>旬空</th><th>动变情况</th><th>冲合·墓绝</th><th>当前状态</th><th>力度评估<small>用神五级 · 原忌三级</small></th>
+          </tr></thead>
           <tbody></tbody>
         </table>
       </div>
+      <p class="matrix-scroll-hint">左右滑动可查看完整表格。</p>
+      <div class="legend">
+        <span><b>临</b> 同支</span><span><b>生 / 克</b> 月日对爻</span><span><b>泄 / 耗</b> 爻对月日</span>
+        <span><b>月破</b> 被月建冲掉</span><span><b>日冲</b> 静爻偏散、动爻不散</span>
+        <span><b>—</b> 本来没有这一项</span><span><b>待核</b> 记录未判</span>
+        <span><b>派生</b> 记录缺该项，按规则推出</span>
+      </div>
+      <p class="muted" id="table-gaps" hidden></p>
     </article>
-    <article class="reason interpretation" aria-labelledby="interpretation-title">
-      <h3 id="interpretation-title">解读</h3>
-      <section class="summary" aria-labelledby="inferred-title">
-        <h4 id="inferred-title">一句话核心结论</h4>
-        <p id="summary"></p>
-      </section>
-      <p class="muted" id="summary-pending" hidden></p>
-      <section class="reading-section" aria-labelledby="fixed-title">
-        <h4 id="fixed-title">用神与世应</h4>
-        <div class="scroll" id="key-points-block" tabindex="0" role="region" aria-labelledby="fixed-title" hidden>
-          <table class="key-points" id="key-points" aria-labelledby="fixed-title">
-            <thead><tr><th scope="col">判断项目</th><th scope="col">对象</th><th scope="col">月建影响</th><th scope="col">日辰影响</th><th scope="col">当前状态</th><th scope="col">力度评估</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <p class="muted matrix-scroll-hint">左右滑动可查看完整表格。</p>
-        <p class="muted" id="strength-reading" hidden></p>
-      </section>
-      <section class="reading-section" id="basis-block" aria-labelledby="basis-title" hidden>
-        <h4 id="basis-title">关键判断依据</h4>
-        <dl class="basis-list" id="basis-list"></dl>
-        <details class="review-details" id="review-details" hidden>
-          <summary>查看详细判断</summary>
-          <p id="summary-detail" hidden></p>
-          <ul class="compact-list" id="reading-notes" hidden></ul>
-        </details>
-      </section>
+    <article class="reason interpretation" aria-labelledby="basis-title">
+      <details class="review-details" id="review-details" hidden>
+        <summary id="basis-title">③ 判断摘要（原文，默认收起）</summary>
+        <p class="muted">以下是解卦写下的推断原文，保留备查；本页结论以 ① ② 为准。</p>
+        <p id="summary-detail" hidden></p>
+        <ul class="compact-list" id="reading-notes" hidden></ul>
+      </details>
       <section class="reading-section" id="windows-block" aria-labelledby="windows-title" hidden>
-        <h4 id="windows-title">应期通道</h4>
+        <h4 id="windows-title">④ 应期通道</h4>
         <p class="muted">以下均为候选通道。</p>
         <ul class="compact-list" id="windows-lines"></ul>
       </section>
       <section class="reading-section" id="verdict-block" aria-labelledby="verdict-title" hidden>
-        <h4 id="verdict-title">分层与证伪</h4>
+        <h4 id="verdict-title">⑤ 分层与证伪</h4>
         <ul class="verdict-layers" id="verdict-layers"></ul>
         <div class="falsifier" id="falsifier-block" hidden>
           <strong>证伪条件</strong>
@@ -184,7 +207,7 @@ th{background:#edf0e7;color:#41564b;font-weight:bold;font-size:13px}
   </section>
   <noscript><p>请启用 JavaScript 查看卦盘。</p></noscript>
 </main>
-<script id="reading-data" type="application/json">{"id":"18","mask":4,"question":"谒贵，能否见到所求见的贵人？","role":"官鬼","month":"酉","day":"丙寅","primary":{"source":"base","position":3,"branch":"酉","element":"金"},"label":"《增删卜易》书例 · 谒贵","candidates":[],"pending":[],"notes":[],"summary":"书例断待子日方能得见。三爻官鬼酉金持世，临酉月；动化午火回头克。子日冲去午火，书载丙子日得见。","source":"书例依据《增删卜易·月将章》，见项目 CASES.md 第 9 例。变爻六亲按本卦宫五行。"}</script>
+<script id="reading-data" type="application/json">{"id":"18","mask":4,"question":"谒贵，能否见到所求见的贵人？","role":"官鬼","month":"酉","day":"丙寅","primary":{"source":"base","position":3,"branch":"酉","element":"金"},"label":"《增删卜易》书例 · 谒贵","candidates":[],"pending":[],"notes":[],"summary":"书例断待子日方能得见。三爻官鬼酉金持世，临酉月；动化午火回头克。子日冲去午火，书载丙子日得见。","source":"书例依据《增删卜易·月将章》。变爻六亲按本卦宫五行。"}</script>
 <script id="chart-data" type="application/json">{"base":{"hexagram_id":18,"name":"山风蛊","upper_trigram":"艮","lower_trigram":"巽","palace":"巽","palace_element":"木","palace_stage":"归魂","shi_line":3,"ying_line":6,"hexagram_relation":"无","lines":[{"position":1,"polarity":"阴","line_title":"初六","stem":"辛","branch":"丑","element":"土","relative":"妻财","shi_ying":"","hidden_stem":null,"hidden_branch":null,"hidden_element":null,"hidden_relative":null},{"position":2,"polarity":"阳","line_title":"九二","stem":"辛","branch":"亥","element":"水","relative":"父母","shi_ying":"","hidden_stem":null,"hidden_branch":null,"hidden_element":null,"hidden_relative":null},{"position":3,"polarity":"阳","line_title":"九三","stem":"辛","branch":"酉","element":"金","relative":"官鬼","shi_ying":"世","hidden_stem":null,"hidden_branch":null,"hidden_element":null,"hidden_relative":null},{"position":4,"polarity":"阴","line_title":"六四","stem":"丙","branch":"戌","element":"土","relative":"妻财","shi_ying":"","hidden_stem":null,"hidden_branch":null,"hidden_element":null,"hidden_relative":null},{"position":5,"polarity":"阴","line_title":"六五","stem":"丙","branch":"子","element":"水","relative":"父母","shi_ying":"","hidden_stem":"辛","hidden_branch":"巳","hidden_element":"火","hidden_relative":"子孙"},{"position":6,"polarity":"阳","line_title":"上九","stem":"丙","branch":"寅","element":"木","relative":"兄弟","shi_ying":"应","hidden_stem":null,"hidden_branch":null,"hidden_element":null,"hidden_relative":null}]},"changed":{"hexagram_id":4,"name":"山水蒙","upper_trigram":"艮","lower_trigram":"坎","palace":"离","palace_element":"火","palace_stage":"四世","shi_line":4,"ying_line":1,"hexagram_relation":"无","lines":[{"position":1,"polarity":"阴","line_title":"初六","stem":"戊","branch":"寅","element":"木","relative":"父母","shi_ying":"应","hidden_stem":null,"hidden_branch":null,"hidden_element":null,"hidden_relative":null},{"position":2,"polarity":"阳","line_title":"九二","stem":"戊","branch":"辰","element":"土","relative":"子孙","shi_ying":"","hidden_stem":null,"hidden_branch":null,"hidden_element":null,"hidden_relative":null},{"position":3,"polarity":"阴","line_title":"六三","stem":"戊","branch":"午","element":"火","relative":"兄弟","shi_ying":"","hidden_stem":null,"hidden_branch":null,"hidden_element":null,"hidden_relative":null},{"position":4,"polarity":"阴","line_title":"六四","stem":"丙","branch":"戌","element":"土","relative":"子孙","shi_ying":"世","hidden_stem":"己","hidden_branch":"酉","hidden_element":"金","hidden_relative":"妻财"},{"position":5,"polarity":"阴","line_title":"六五","stem":"丙","branch":"子","element":"水","relative":"官鬼","shi_ying":"","hidden_stem":null,"hidden_branch":null,"hidden_element":null,"hidden_relative":null},{"position":6,"polarity":"阳","line_title":"上九","stem":"丙","branch":"寅","element":"木","relative":"父母","shi_ying":"","hidden_stem":null,"hidden_branch":null,"hidden_element":null,"hidden_relative":null}]},"moving":{"3":"子孙"},"day":{"branch":"寅","kong_1":"戌","kong_2":"亥"},"interactions":{"寅子":{"actor":"寅","target":"子","wuxing":"被生","same_branch":0,"chong":0,"he":0,"target_stage":null},"寅丑":{"actor":"寅","target":"丑","wuxing":"克","same_branch":0,"chong":0,"he":0,"target_stage":null},"寅寅":{"actor":"寅","target":"寅","wuxing":"比和","same_branch":1,"chong":0,"he":0,"target_stage":null},"寅巳":{"actor":"寅","target":"巳","wuxing":"生","same_branch":0,"chong":0,"he":0,"target_stage":"长生"},"寅午":{"actor":"寅","target":"午","wuxing":"生","same_branch":0,"chong":0,"he":0,"target_stage":"长生"},"寅酉":{"actor":"寅","target":"酉","wuxing":"被克","same_branch":0,"chong":0,"he":0,"target_stage":"绝"},"寅戌":{"actor":"寅","target":"戌","wuxing":"克","same_branch":0,"chong":0,"he":0,"target_stage":null},"寅亥":{"actor":"寅","target":"亥","wuxing":"被生","same_branch":0,"chong":0,"he":1,"target_stage":null},"酉子":{"actor":"酉","target":"子","wuxing":"生","same_branch":0,"chong":0,"he":0,"target_stage":null},"酉丑":{"actor":"酉","target":"丑","wuxing":"被生","same_branch":0,"chong":0,"he":0,"target_stage":null},"酉寅":{"actor":"酉","target":"寅","wuxing":"克","same_branch":0,"chong":0,"he":0,"target_stage":null},"酉巳":{"actor":"酉","target":"巳","wuxing":"被克","same_branch":0,"chong":0,"he":0,"target_stage":null},"酉午":{"actor":"酉","target":"午","wuxing":"被克","same_branch":0,"chong":0,"he":0,"target_stage":null},"酉酉":{"actor":"酉","target":"酉","wuxing":"比和","same_branch":1,"chong":0,"he":0,"target_stage":"帝旺"},"酉戌":{"actor":"酉","target":"戌","wuxing":"被生","same_branch":0,"chong":0,"he":0,"target_stage":null},"酉亥":{"actor":"酉","target":"亥","wuxing":"生","same_branch":0,"chong":0,"he":0,"target_stage":null}},"strength":{"土":"休囚","木":"休囚","水":"相","火":"休囚","金":"旺"},"roles":{"yuanshen":"妻财","jishen":"子孙","choushen":"兄弟"}}</script>
 <script>
 "use strict";
@@ -250,20 +273,6 @@ function renderBoard(baseChart, changedChart, moving, selected) {
     ${changedChart ? '<th scope="col">变卦六亲</th>' : ""}</tr></thead><tbody>${rows.join("")}</tbody>`;
 }
 
-function interaction(branch, target, period) {
-  if (!branch) return "—";
-  const hit = data.interactions[branch + target];
-  const relation = {生:"生爻", 克:"克爻", 被生:"爻生" + period, 被克:"爻克" + period, 比和:"比和"};
-  return [hit.same_branch ? "临" + period : relation[hit.wuxing],
-    hit.chong && (period === "月建" ? "月冲（月破）" : "日冲"), hit.he && "合", hit.target_stage].filter(Boolean).join(" · ");
-}
-
-function strengthValues(line, dayBranch, voidBranches) {
-  return [data.strength[line.element] || "—",
-    interaction(reading.month, line.branch, "月建"), interaction(dayBranch, line.branch, "日辰"),
-    voidBranches ? (voidBranches.includes(line.branch) ? "空" : "—") : "待核"];
-}
-
 function renderList(id, texts) {
   const list = byId(id);
   list.replaceChildren(...texts.map(text => {
@@ -274,212 +283,147 @@ function renderList(id, texts) {
   list.hidden = !texts.length;
 }
 
-function renderStrength(chart, candidates, selected) {
-  const body = byId("strength").tBodies[0];
-  if (!chart) {
-    body.innerHTML = Array.from({length: 6}, (_, index) => `<tr data-position="${6 - index}">
-      <td>${label(6 - index)} · 待核</td>${"<td>—</td>".repeat(5)}</tr>`).join("");
-    return ["六爻纳甲待核"];
-  }
-
-  const rows = chart.lines.map(line => [{line, names: []}]);
-  const extras = [];
-  const missing = [];
-  function addRole(name, line) {
-    const group = line.position ? rows[line.position - 1] : extras;
-    let entry = group.find(item => item.line.source === line.source);
-    if (!entry) {
-      entry = {line, names: []};
-      group.push(entry);
+function renderItems(items) {
+  const root = byId("items");
+  root.replaceChildren();
+  for (const item of items || []) {
+    const card = document.createElement("div");
+    card.className = "item";
+    card.dataset.key = item.key || "";
+    const head = document.createElement("div");
+    head.className = "item-h";
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = item.tag || item.key || "";
+    const obj = document.createElement("span");
+    obj.className = "obj";
+    obj.textContent = item.object || "";
+    const state = document.createElement("span");
+    state.className = "state";
+    if (item.state) state.dataset.f = item.state;
+    state.textContent = item.state || "—";
+    head.append(tag, obj, state);
+    const body = document.createElement("div");
+    const list = document.createElement("ul");
+    for (const line of item.lines || []) {
+      const li = document.createElement("li");
+      li.textContent = line;
+      list.append(li);
     }
-    entry.names.push(name);
-  }
-  addRole("世爻", chart.lines[chart.shi_line - 1]);
-  addRole("应爻", chart.lines[chart.ying_line - 1]);
-  if (selected) addRole("主用神", selected);
-  else candidates.forEach(line => addRole("用神候选", line));
-
-  const roles = data.roles;
-  if (roles) {
-    for (const [key, name] of [["yuanshen", "原神"], ["jishen", "忌神"], ["choushen", "仇神"]]) {
-      const relative = roles[key];
-      const visible = chart.lines.filter(line => line.relative === relative);
-      if (visible.length) {
-        visible.forEach(line => addRole(name, line));
-      } else {
-        const hidden = chart.lines.find(line => line.hidden_relative === relative);
-        if (hidden) addRole(name, {position: hidden.position, source: "伏神", stem: hidden.hidden_stem,
-          branch: hidden.hidden_branch, element: hidden.hidden_element, relative});
-        else if (name !== "仇神") missing.push(`${name}${relative}本卦未现`);
+    body.append(list);
+    if ((item.folded || []).length) {
+      const extra = document.createElement("details");
+      const summary = document.createElement("summary");
+      summary.textContent = `另有 ${item.folded.length} 句`;
+      extra.append(summary);
+      const more = document.createElement("ul");
+      for (const line of item.folded) {
+        const li = document.createElement("li");
+        li.textContent = line;
+        more.append(li);
       }
+      extra.append(more);
+      body.append(extra);
     }
+    card.append(head, body);
+    root.append(card);
   }
-
-  const dayBranch = data.day?.branch || reading.dayBranch;
-  const voidBranches = data.day && [data.day.kong_1, data.day.kong_2];
-  const ordered = [...rows].reverse().map(group => group.map(entry => ({
-    ...entry, values: strengthValues(entry.line, dayBranch, voidBranches)
-  })));
-  body.innerHTML = ordered.map(group => {
-    const entries = group.map(({line, names, values}) => [
-      line.source ? `${line.source} · ${lineData(line)}` : focusName(line), names.join(" · ") || "—", ...values
-    ]);
-    const [main, ...details] = entries;
-    const cells = main.map((value, index) => `<td>${value}${details.map(detail =>
-      `<span class="detail">${detail[index]}</span>`).join("")}</td>`);
-    return `<tr data-position="${group[0].line.position}">${cells.join("")}</tr>`;
-  }).join("");
-
-  return [!reading.month && "月建待核", !dayBranch && "日辰待核", !voidBranches && "旬空待核", ...missing].filter(Boolean);
+  byId("items-empty").hidden = Boolean(items && items.length);
 }
 
-function renderKeyPoints(selected, conclusions, gaps) {
-  const results = [];
-  const forces = reading.month && reading.day ? conclusions.forces_lines || [] : [];
-  const voids = data.day ? [data.day.kong_1, data.day.kong_2] : [];
-  const dayBranch = data.day?.branch || reading.dayBranch;
-  const labels = {用神:"用神", 原神:"原神生用", 忌神:"忌神克用", 世爻:"世爻", 应爻:"应爻"};
-
-  function influence(branch, period, line, reasons) {
-    if (!branch) return "待核";
-    const hit = data.interactions[branch + line.branch];
-    if (!hit) return "待核";
-    const monthly = period === "月";
-    const relation = {生:"生扶", 克:"克制", 被生:"受爻所生", 被克:"不生扶（受爻所克）", 比和:"比和"};
-    const direction = hit.same_branch ? "临爻" : relation[hit.wuxing];
-    const clash = hit.chong && (monthly ? "月破" : reasons.includes("日破") ? "日冲（日破）" : "日冲");
-    const state = monthly && data.strength?.[line.element];
-    const stage = hit.target_stage === "墓" ? reasons.includes("入墓") ? "入墓" : "见墓" : hit.target_stage;
-    const effects = [clash, direction, hit.he && "相合", stage, state].filter(Boolean);
-    return effects.length ? `${branch}${period} · ${effects.join(" · ")}` : `${branch}${period} · 待核`;
-  }
-
-  function addForce(role, line, force) {
-    const reasons = force?.reasons || [];
-    const root = role === "用神" && forces.length && conclusions.primary_rooted;
-    const moving = !line.source && Boolean(data.moving[line.position]);
-    const state = [moving && "明动", voids.includes(line.branch) && !reasons.includes("真空") && "旬空",
-      ...reasons.filter(reason => !["动", "非动", "无明显旺衰偏倚"].includes(reason)), root].filter(Boolean);
-    if (!state.length && !line.source && reading.mask != null) state.push("静爻");
-    const forceLevel = force?.force;
-    const outcomes = {用神:{有力:"自身有力"}, 原神:{有力:"能生扶用神", 无力:"当前不能生"}, 忌神:{有力:"能克制用神", 无力:"当前不能克"}};
-    const limited = forceLevel === "有力" && reasons.includes("月破") && !data.interactions[(dayBranch || "") + line.branch]?.same_branch;
-    const outlook = limited ? "有力，暂受月破" : outcomes[role]?.[forceLevel] || forceLevel || "力度待核";
-    results.push({role, object:focusName(line), month:influence(reading.month, "月", line, reasons),
-      day:influence(dayBranch, "日", line, reasons), state:[...new Set(state)].join(" · ") || "待核",
-      outlook, forceLevel, limited});
-  }
-
-  if (selected) {
-    addForce("用神", selected, forces.find(line => line.role === "用神"));
-    for (const role of ["原神", "忌神"]) {
-      const entries = forces.filter(line => line.role === role);
-      const relative = data.roles?.[role === "原神" ? "yuanshen" : "jishen"];
-      for (const force of entries) {
-        addForce(role, data.base.lines[force.position - 1], force);
-      }
-      if (!entries.length) {
-        const knownLines = relative ? data.base.lines.filter(line => line.relative === relative) : [];
-        const hiddenLine = relative && data.base.lines.find(line => line.hidden_relative === relative);
-        if (knownLines.length) knownLines.forEach(line => addForce(role, line));
-        else if (hiddenLine) addForce(role, focusLine({source:"hidden", position:hiddenLine.position,
-          branch:hiddenLine.hidden_branch, element:hiddenLine.hidden_element}));
-        else results.push({role, object:relative || "待核", month:"—", day:"—",
-          state:relative ? "本卦未见" : "待核", outlook:"作用待核"});
-      }
-    }
-  }
-  if (data.base) {
-    for (const [role, position] of [["世爻", data.base.shi_line], ["应爻", data.base.ying_line]]) {
-      addForce(role, data.base.lines[position - 1], forces.find(line => line.position === position));
-    }
-  }
-
-  const body = byId("key-points").tBodies[0];
-  for (const {role, object, month, day, state, outlook, forceLevel, limited} of results) {
-    const row = body.insertRow();
-    row.dataset.role = role;
-    const heading = document.createElement("th");
-    heading.scope = "row";
-    heading.textContent = labels[role];
-    row.append(heading);
-    row.insertCell().textContent = object;
-    row.cells[1].className = "object-name";
-    for (const value of [month, day, state]) row.insertCell().textContent = value;
-    const badge = document.createElement("span");
-    badge.className = "force-status";
-    if (forceLevel) badge.dataset.force = forceLevel;
-    badge.toggleAttribute("data-limited", Boolean(limited));
-    badge.textContent = outlook;
-    row.insertCell().append(badge);
-  }
-  byId("key-points-block").hidden = !results.length;
-  const pending = [...gaps];
-  if (!selected && data.base) pending.push("主用神待定");
-  byId("strength-reading").textContent = pending.length ? pending.join("、") + "。" : "";
-  byId("strength-reading").hidden = !pending.length;
-  return results;
+function attrCell(attrs) {
+  if (!attrs || attrs === "—") return '<span class="dash">—</span>';
+  return attrs.split("·").map(part => {
+    const role = ["用神", "原神", "忌神", "仇神"].includes(part);
+    return `<span class="badge ${role ? "role" : ""}">${part}</span>`;
+  }).join(" ");
 }
 
-function describeChange(selected, move) {
-  if (!move) {
-    return reading.mask === 0 ? "本卦无明动爻，按静卦看。"
-      : reading.mask == null ? "动爻待核。" : "用神无同位动变记录，结合相关动爻判断。";
+function forceCell(row) {
+  const value = row.force || "—";
+  if (value === "—") {
+    const note = row.force_note ? `<small class="sub">${row.force_note}</small>` : "";
+    return `<span class="dash">—</span>${note}`;
   }
-  const voids = data.day ? [data.day.kong_1, data.day.kong_2] : [];
-  const target = move.changed_branch + move.changed_element;
-  const effect = {
-    "动生变": `${selected.branch}${selected.element}生${target}，用神耗力`,
-    "动克变": `用神克变爻${target}`,
-    "回头生": `变爻${target}反过来生用神`,
-    "回头克": `变爻${target}反过来克用神`,
-    "比和": "用神与变爻同五行",
-  }[move.huitou];
-  return [`${selected.branch}${selected.element} → ${target}（${move.changed_relative}）`, effect,
-    move.hua_he && "同位变爻相合", move.hua_chong && "同位变爻相冲", move.jin_tui && `化${move.jin_tui}`,
-    move.hua_stage && `化${move.hua_stage}`, voids.includes(move.changed_branch) && "化旬空"].filter(Boolean).join(" · ");
+  const note = row.force_derived ? "派生" : (row.force_note || "");
+  return `<span class="force" data-f="${value}">${value}${note ? `<small>（${note}）</small>` : ""}</span>`;
 }
 
-function renderBasis(selected, points, interp) {
-  const rows = [];
-  if (selected) {
-    const {branch, element} = selected;
-    const dayBranch = data.day?.branch || reading.dayBranch;
-    const [monthly, monthEffect, dayEffect, kong] = strengthValues(selected, dayBranch,
-      data.day && [data.day.kong_1, data.day.kong_2]);
-    const related = points.filter(({role}) => role === "原神" || role === "忌神");
-    const relatedText = related.map(({role, object, outlook}) => `${role}${object}，${outlook}`);
-    rows.push(
-      ["月建", reading.month ? `${reading.month}月 · 用神${branch}${element}月令${monthly} · ${monthEffect}` : "月建待核。"],
-      ["日辰", dayBranch ? `${reading.day || dayBranch}日 · 用神${branch}${element} · ${dayEffect}` : "日辰待核。"],
-      ["旬空", data.day ? `${data.day.kong_1}、${data.day.kong_2}空 · 用神${branch}${kong === "空" ? "逢空" : "不空"}` : "旬空待核。"],
-      ["动变", describeChange(selected, interp.conclusions?.primary_change)],
-      ["原忌神", relatedText.join("；") || "原神、忌神的作用待核。"],
-    );
+function renderTable(table) {
+  const body = byId("line-table").tBodies[0];
+  body.replaceChildren();
+  const rows = [...(table?.rows || []), ...(table?.extras || [])];
+  for (const row of rows) {
+    const tr = document.createElement("tr");
+    tr.dataset.key = row.key || "";
+    const th = document.createElement("th");
+    th.className = "pos";
+    th.scope = "row";
+    th.innerHTML = `<b>${row.pos_label || ""}</b><i>${row.line_title || ""}</i>`;
+    tr.append(th);
+    const move = document.createElement("td");
+    if (row.move_kind === "明动" || row.move_kind === "暗动") {
+      move.innerHTML = `<span class="mv">${row.move_kind === "明动" ? "○" : "●"} ${row.move_kind}</span>`;
+    } else {
+      move.textContent = row.move_kind || "—";
+    }
+    tr.append(move);
+    for (const value of [row.relative, row.stem_branch_element]) {
+      const cell = document.createElement("td");
+      cell.textContent = value || "—";
+      tr.append(cell);
+    }
+    const attrs = document.createElement("td");
+    attrs.innerHTML = attrCell(row.attrs);
+    tr.append(attrs);
+    for (const key of ["month_effect", "day_effect"]) {
+      const cell = document.createElement("td");
+      cell.textContent = row[key] || "—";
+      tr.append(cell);
+    }
+    const voidCell = document.createElement("td");
+    if ((row.void || "").startsWith("空")) {
+      voidCell.className = "void-cell";
+      voidCell.textContent = row.void;
+    } else if (row.void === "—") {
+      voidCell.innerHTML = '<span class="dash">—</span>';
+    } else {
+      voidCell.textContent = row.void || "—";
+    }
+    tr.append(voidCell);
+    for (const key of ["change", "clash", "state"]) {
+      const cell = document.createElement("td");
+      const value = row[key] || "—";
+      if (value === "—") cell.innerHTML = '<span class="dash">—</span>';
+      else if (String(value).includes("退神")) {
+        cell.innerHTML = String(value).replace("退神", '<span class="badge warn">退神</span>');
+      } else cell.textContent = value;
+      tr.append(cell);
+    }
+    const force = document.createElement("td");
+    force.innerHTML = forceCell(row);
+    tr.append(force);
+    body.append(tr);
   }
-  const list = byId("basis-list");
-  for (const [name, value] of rows) {
-    const row = document.createElement("div");
-    const title = document.createElement("dt");
-    const detail = document.createElement("dd");
-    title.textContent = name;
-    detail.textContent = value;
-    row.append(title, detail);
-    list.append(row);
-  }
-  list.hidden = !rows.length;
+  const gaps = table?.gaps || [];
+  const checks = table?.checks?.problems || [];
+  const messages = [...gaps, ...checks];
+  byId("table-gaps").textContent = messages.length ? "需核对：" + messages.join("；") : "";
+  byId("table-gaps").hidden = !messages.length;
+}
 
+function renderBasis(interp) {
   const notes = (reading.notes || []).map(note => note.text);
   notes.push(...(interp.preset_blocks || [])
     .filter(block => !block.derived && !["X01", "X02"].includes(block.id))
     .map(block => block.text));
   renderList("reading-notes", notes);
-  const hasLongSummary = reading.summary !== byId("summary").textContent;
-  byId("summary-detail").textContent = hasLongSummary ? reading.summary : "";
-  byId("summary-detail").hidden = !hasLongSummary;
-  const hasDetails = notes.length > 0 || hasLongSummary;
-  byId("review-details").hidden = !hasDetails;
-  byId("basis-block").hidden = !rows.length && !hasDetails;
+  const detail = reading.detail_summary || "";
+  const headline = reading.headline || byId("summary").textContent;
+  const showDetail = detail && detail !== headline;
+  byId("summary-detail").textContent = showDetail ? detail : "";
+  byId("summary-detail").hidden = !showDetail;
+  byId("review-details").hidden = !(notes.length || showDetail);
 }
 
 function renderVerdict(conclusions) {
@@ -529,22 +473,20 @@ function showReading() {
     hero.innerHTML = "<div><h1>盘面待核</h1><p></p></div>";
     hero.querySelector("p").textContent = reading.baseName || "";
   }
-  const gaps = renderStrength(base, base ? reading.candidates.map(focusLine) : [], selected);
-
   byId("case-label").textContent = reading.label || "本次解读 · " + reading.status;
   byId("source").textContent = reading.source;
   byId("disclaimer").textContent = reading.disclaimer || "";
 
   const interp = reading.interpretation || {};
   const conclusions = interp.conclusions || {};
-  const summary = reading.summary.trim();
-  const firstSentence = summary.match(/^[^。！？]+[。！？]/u)?.[0] || summary;
-  byId("summary").textContent = firstSentence;
+  const headline = (reading.headline || interp.headline || reading.summary || "").trim();
+  byId("summary").textContent = headline || "用神状态待核。";
   const pending = reading.pending || [];
   byId("summary-pending").textContent = pending.join(" ");
   byId("summary-pending").hidden = !pending.length;
-  const points = renderKeyPoints(selected, conclusions, gaps);
-  renderBasis(selected, points, interp);
+  renderItems(interp.items || []);
+  renderTable(interp.table || {});
+  renderBasis(interp);
 
   const windowLines = (conclusions.windows || []).map(item =>
     `${item.branch}${item.unit} · ${(item.channels || []).join("、") || "通道待核"}${item.confidence === "high" ? "（多条通道吻合）" : ""}`

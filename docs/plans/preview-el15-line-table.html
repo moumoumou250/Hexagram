@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>解读区改版预览 · 六爻判断表</title>
+<style>
+:root{color-scheme:light;--paper:#f6f3e9;--card:#fffdf7;--ink:#243b32;--muted:#52645a;--line:#dedfd1;--jade:#24483c;--rust:#9e412b;--amber:#8a5a1e;--amber-bg:#f7edd9;--green-bg:#dfeee4;--green-ink:#1f5138}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.65 "Microsoft YaHei","PingFang SC",sans-serif}
+main{max-width:1200px;margin:auto;padding:22px 26px 56px}
+h1,h2,h3,h4{font-family:"Noto Serif SC","Songti SC",SimSun,serif;margin:0}
+.preview-note{display:inline-block;margin-bottom:14px;padding:4px 10px;border:1px dashed #b9a98c;border-radius:6px;color:#7a6338;font-size:12px}
+.head{background:var(--card);border:1px solid var(--line);border-radius:13px;overflow:hidden}
+.head .hero{background:#1d3b34;background-image:radial-gradient(ellipse at 78% 120%,#386455,transparent 70%);color:#fff9ea;padding:18px 24px;display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center}
+.head .hero .name{font-size:26px;letter-spacing:.06em}
+.head .hero small{color:#d8d2b4;letter-spacing:.14em;font-size:11px}
+.head .hero .arrow{color:#ecd1a4;font-size:20px}
+.head dl{display:flex;flex-wrap:wrap;gap:8px 26px;margin:0;padding:12px 20px}
+.head dl div{display:flex;gap:7px}
+.head dt{color:var(--muted);font-size:13px}
+.head dd{margin:0;font-weight:600}
+.headline{margin:0;padding:14px 22px 18px;font-size:19px;font-weight:700;line-height:1.5;border-top:1px solid var(--line);background:#eef2e9}
+.headline span{display:block;font:400 12px/1.6 "Microsoft YaHei",sans-serif;color:var(--muted);margin-top:4px}
+section{margin-top:18px}
+.sec-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.sec-title h2{font-size:21px}
+.sec-title p{margin:0;color:var(--muted);font-size:12.5px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 18px}
+/* ① 要点 */
+.items{display:grid;gap:10px}
+.item{display:grid;grid-template-columns:150px 1fr;gap:14px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#fffef9}
+.item[data-key="用神"]{background:#f2f7ef;border-color:#c7d8c6;box-shadow:inset 3px 0 #487259}
+.item[data-key="世"] ,.item[data-key="应"]{background:#fbf7ec;border-color:#e3d9c2}
+.item-h{display:flex;flex-direction:column;gap:6px}
+.tag{font-size:13px;font-weight:700;color:var(--jade)}
+.item-h .obj{font-size:12.5px;color:var(--muted);white-space:nowrap}
+.state{align-self:flex-start;display:inline-block;padding:1px 8px;border-radius:4px;font-size:12px;font-weight:700;background:#eceee6;color:#42544a}
+.state[data-f="有力"]{background:var(--green-bg);color:var(--green-ink)}
+.state[data-f="衰而有救"]{background:#e8efe0;color:#3a5a35}
+.state[data-f="无力"]{background:var(--amber-bg);color:var(--amber)}
+.item ul{margin:0;padding-left:1.15em;font-size:14px;line-height:1.7}
+.item li+li{margin-top:3px}
+.item .gloss{color:var(--muted)}
+.struct{grid-column:1/-1;font-size:12.5px;color:var(--muted);padding:2px 4px}
+/* ② 表 */
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:11px;background:var(--card)}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:1160px;font-size:12.5px;line-height:1.45}
+thead th{position:sticky;top:0;background:#28493d;color:#fffdf7;font-weight:600;text-align:left;padding:9px 8px;white-space:nowrap;font-size:12px;border-bottom:0}
+thead th small{display:block;font-weight:400;color:#c9d6cd;font-size:10.5px;letter-spacing:.02em}
+tbody th,tbody td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+tbody th{position:sticky;left:0;z-index:2;background:var(--card);text-align:left;font-weight:700}
+tbody tr:nth-child(even) th,tbody tr:nth-child(even) td{background:#f8f8f2}
+tbody tr:nth-child(even) th{background:#f8f8f2}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+tr[data-key="用神"] th,tr[data-key="用神"] td{background:#e9f0e6!important}
+tr[data-key="用神"] th{box-shadow:inset 3px 0 #487259}
+tr[data-key="世"] th,tr[data-key="世"] td{background:#faf5e8!important}
+tr[data-key="应"] th,tr[data-key="应"] td{background:#faf5e8!important}
+.pos b{font-size:13px}
+.pos i{display:block;font-style:normal;color:var(--muted);font-size:10.5px}
+.mv{display:inline-block;padding:0 5px;border-radius:4px;background:#f1d8ca;color:#86341f;font-weight:700;font-size:11.5px}
+.badge{display:inline-block;padding:0 5px;border-radius:4px;font-size:11.5px;font-weight:700;background:#e6eee2;color:#345344}
+.badge.role{background:#24483c;color:#fffdf7}
+.badge.warn{background:var(--amber-bg);color:var(--amber)}
+.void{color:#8a5a1e;font-weight:700}
+.sub{display:block;font-weight:400;font-size:10.5px;color:#8b978f;margin-top:1px}
+.dash{color:#a9b3ab}
+.pending{color:#8a7418;background:#f7f2d9;border-radius:3px;padding:0 4px;font-size:11.5px}
+.force{display:inline-block;padding:2px 7px;border-radius:5px;font-weight:700;font-size:12px}
+.force[data-f="有力"]{background:var(--green-bg);color:var(--green-ink)}
+.force[data-f="无力"]{background:var(--amber-bg);color:var(--amber)}
+.force[data-f="待核"]{background:#eceee6;color:#4b5a51}
+.force small{font-weight:400;opacity:.85}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:9px 2px 0;font-size:12px;color:var(--muted)}
+.legend b{color:var(--ink);font-weight:700}
+.hint{display:none;margin:7px 2px 0;font-size:12px;color:var(--muted)}
+/* ③ 摘要 */
+details{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:12px 16px}
+summary{cursor:pointer;font-weight:700;color:var(--jade);font-size:14px}
+details p{margin:10px 0 0;font-size:14px;color:#3d4f45}
+details .note{color:var(--muted);font-size:12px}
+.foot{margin-top:16px;color:var(--muted);font-size:12px;line-height:1.7}
+@media(max-width:760px){
+  main{padding:14px 12px 34px}
+  .head .hero{grid-template-columns:1fr;gap:8px;padding:14px}
+  .head .hero .arrow{display:none}
+  .item{grid-template-columns:1fr;gap:8px}
+  .hint{display:block}
+  .headline{font-size:16.5px}
+}
+</style>
+</head>
+<body>
+<main>
+<p class="preview-note">样式预览 · 数据取自真实卦例（兑为泽 → 雷水解，酉月辛亥日）· 非最终页面</p>
+
+<div class="head">
+  <div class="hero">
+    <div><small>本卦 · 第 58 卦</small><div class="name">兑为泽</div></div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div><small>变卦 · 第 40 卦</small><div class="name">雷水解</div></div>
+  </div>
+  <dl>
+    <div><dt>月建</dt><dd>酉月</dd></div>
+    <div><dt>日辰</dt><dd>辛亥日</dd></div>
+    <div><dt>旬空</dt><dd>寅、卯</dd></div>
+    <div><dt>主用神</dt><dd>二爻 卯木 妻财</dd></div>
+    <div><dt>明动</dt><dd>初爻、五爻</dd></div>
+  </dl>
+  <p class="headline">用神眼下是衰而有救：月破、旬空压着，但日辰生它，有根，等出空再论。
+    <span>只讲用神现在的状态，不判断所问事情的结局。</span></p>
+</div>
+
+<section aria-labelledby="t1">
+  <div class="sec-title"><h2 id="t1">① 用神盘面要点</h2><p>每条按「谁 · 现在怎样 · 为什么」说一遍</p></div>
+  <div class="panel items">
+
+    <div class="item" data-key="用神">
+      <div class="item-h"><span class="tag">用神</span><span class="obj">二爻 卯木 妻财</span>
+        <span class="state" data-f="衰而有救">衰而有救</span></div>
+      <div><ul>
+        <li>用神现在是衰而有救。月建把它冲掉（月破），本身又休囚。</li>
+        <li>还落在旬空（这旬轮空），力量再打一折。</li>
+        <li>但日辰生它，又在日辰上见长生，所以站得住，不算无根。</li>
+        <li>等出空、出月，再看它能不能落到实处。</li>
+      </ul></div>
+    </div>
+
+    <div class="item" data-key="世">
+      <div class="item-h"><span class="tag">世爻</span><span class="obj">上爻 未土 父母 · 仇神</span>
+        <span class="state">关系待判</span></div>
+      <div><ul>
+        <li>世爻偏弱。酉月土休囚，日辰又耗它。</li>
+        <li>用神克世：用神与世直接相接，力量是对着世来的。</li>
+      </ul></div>
+    </div>
+
+    <div class="item" data-key="应">
+      <div class="item-h"><span class="tag">应爻</span><span class="obj">三爻 丑土 父母 · 仇神</span>
+        <span class="state">关系待判</span></div>
+      <div><ul>
+        <li>应爻也偏弱。月建泄它，日辰耗它，本身安静不动。</li>
+        <li>世应丑未相冲，两头都不稳。</li>
+      </ul></div>
+    </div>
+
+    <div class="item" data-key="原神">
+      <div class="item-h"><span class="tag">原神</span><span class="obj">四爻 亥水 子孙</span>
+        <span class="state" data-f="有力">有力</span></div>
+      <div><ul>
+        <li>原神有力。临着日辰，酉月金又生它。</li>
+        <li>但它生不到用神：用神旬空，空不受生。</li>
+        <li>等用神出空，这股生力才接得上。</li>
+      </ul></div>
+    </div>
+
+    <div class="item" data-key="忌神">
+      <div class="item-h"><span class="tag">忌神</span><span class="obj">五爻 酉金 兄弟</span>
+        <span class="state" data-f="有力">有力</span></div>
+      <div><ul>
+        <li>忌神有力。临月建而旺，又明动。</li>
+        <li>化申金是退神（力量往下走），占近事暂不以退论。</li>
+        <li>克用神的力量还在，出月才减。</li>
+      </ul></div>
+    </div>
+
+    <div class="item" data-key="动爻">
+      <div class="item-h"><span class="tag">动爻</span><span class="obj">初爻 巳火 官鬼</span>
+        <span class="state">明动</span></div>
+      <div><ul>
+        <li>初爻明动，变爻回头生它，又化长生，自身有气。</li>
+        <li>它本可克五爻忌神，但所化寅木旬空，这条路眼下不通。</li>
+        <li>日辰冲它，动爻不因日冲而散。</li>
+      </ul></div>
+    </div>
+
+    <div class="item" data-key="结构">
+      <div class="item-h"><span class="tag">结构</span><span class="obj">两动 · 变爻</span>
+        <span class="state">说明</span></div>
+      <div><ul>
+        <li>初爻巳与五爻酉同动：巳火克酉金，动爻之间先有一层制约。</li>
+        <li>变爻只管本位动爻，不管别的爻；能管变爻的只有月和日。</li>
+      </ul></div>
+      <p class="struct gloss">另：互卦、天干合化不用来找用神；六神只当形容词，不改力量。</p>
+    </div>
+
+  </div>
+</section>
+
+<section aria-labelledby="t2">
+  <div class="sec-title"><h2 id="t2">② 六爻判断表</h2><p>上爻在上，初爻在下 · 一列只回答一个问题</p></div>
+  <div class="scroll" tabindex="0" role="region" aria-label="六爻判断表">
+    <table>
+      <colgroup>
+        <col style="width:62px"><col style="width:76px"><col style="width:62px"><col style="width:76px">
+        <col style="width:92px"><col style="width:120px"><col style="width:120px"><col style="width:70px">
+        <col style="width:158px"><col style="width:92px"><col style="width:126px"><col style="width:146px">
+      </colgroup>
+      <thead><tr>
+        <th>爻位</th><th>对象<small>动 / 静</small></th><th>六亲</th><th>地支五行</th>
+        <th>属性<small>用/原/忌/仇/世/应</small></th><th>月建影响<small>做了什么</small></th><th>日辰影响<small>做了什么</small></th>
+        <th>旬空</th><th>动变情况</th><th>冲合·墓绝</th><th>当前状态</th><th>力度评估<small>用神五级 · 原忌三级</small></th>
+      </tr></thead>
+      <tbody>
+        <tr data-key="世">
+          <th class="pos"><b>上爻</b><i>上六</i></th>
+          <td>静</td><td>父母</td><td>丁未土</td>
+          <td><span class="badge role">仇神</span> <span class="badge">世</span></td>
+          <td>酉月休囚 · 泄</td><td>亥日耗</td>
+          <td class="dash">—</td>
+          <td class="dash">—</td>
+          <td class="dash">—</td>
+          <td>静 · 休囚</td>
+          <td class="dash">—<small class="sub">世应无力度字段</small></td>
+        </tr>
+        <tr data-key="忌神">
+          <th class="pos"><b>五爻</b><i>九五</i></th>
+          <td><span class="mv">○ 明动</span></td><td>兄弟</td><td>丁酉金</td>
+          <td><span class="badge role">忌神</span></td>
+          <td>酉月旺 · 临</td><td>亥日泄</td>
+          <td class="dash">—</td>
+          <td>动 → 申金 · <span class="badge warn">退神</span></td>
+          <td class="dash">—</td>
+          <td>明动 · 旺 · 化退</td>
+          <td><span class="force" data-f="有力">有力<small>（能作用）</small></span></td>
+        </tr>
+        <tr data-key="原神">
+          <th class="pos"><b>四爻</b><i>九四</i></th>
+          <td>静</td><td>子孙</td><td>丁亥水</td>
+          <td><span class="badge role">原神</span></td>
+          <td>酉月相 · 生</td><td>亥日临</td>
+          <td class="dash">—</td>
+          <td class="dash">—</td>
+          <td class="dash">—</td>
+          <td>静 · 相 · 临日</td>
+          <td><span class="force" data-f="有力">有力<small>（作用待核）</small></span></td>
+        </tr>
+        <tr data-key="应">
+          <th class="pos"><b>三爻</b><i>六三</i></th>
+          <td>静</td><td>父母</td><td>丁丑土</td>
+          <td><span class="badge role">仇神</span> <span class="badge">应</span></td>
+          <td>酉月休囚 · 泄</td><td>亥日耗</td>
+          <td class="dash">—</td>
+          <td class="dash">—</td>
+          <td>与世相冲</td>
+          <td>静 · 休囚</td>
+          <td class="dash">—<small class="sub">世应无力度字段</small></td>
+        </tr>
+        <tr data-key="用神">
+          <th class="pos"><b>二爻</b><i>九二</i></th>
+          <td>静</td><td>妻财</td><td>丁卯木</td>
+          <td><span class="badge role">用神</span></td>
+          <td>酉月休囚 · <b>月破</b></td><td>亥日生 · 长生</td>
+          <td class="void">空</td>
+          <td class="dash">—</td>
+          <td class="dash">—</td>
+          <td>静 · 衰 · 月破</td>
+          <td><span class="force" data-f="有力">衰而有救<small>（派生）</small></span></td>
+        </tr>
+        <tr data-key="旁">
+          <th class="pos"><b>初爻</b><i>初九</i></th>
+          <td><span class="mv">○ 明动</span></td><td>官鬼</td><td>丁巳火</td>
+          <td class="dash">—</td>
+          <td>酉月休囚 · 耗</td><td>亥日克 · 日冲</td>
+          <td class="dash">—</td>
+          <td>动 → 寅木 · 回头生 · 化空</td>
+          <td>见绝</td>
+          <td>明动 · 休囚 · 日冲不散</td>
+          <td class="dash">—<small class="sub">旁爻</small></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="hint">左右滑动可查看完整表格。</p>
+  <div class="legend">
+    <span><b>临</b> 同支</span><span><b>生 / 克</b> 月日对爻</span><span><b>泄 / 耗</b> 爻对月日</span>
+    <span><b>月破</b> 被月建冲掉</span><span><b>日冲</b> 静爻偏散、动爻不散</span>
+    <span><b>—</b> 本来没有这一项</span><span><b>待核</b> 记录未判</span>
+    <span><b>派生</b> 记录缺该项，按规则推出（灰字）</span>
+  </div>
+  <div class="legend" style="margin-top:2px">
+    <span>力度：用神取「旺 / 有气 / 衰而有救 / 衰 / 无用」，原忌仇取「有力 / 中和 / 无力」；世应无力度字段，记 <b>—</b></span>
+  </div>
+</section>
+
+<section aria-labelledby="t3">
+  <details>
+    <summary>③ 判断摘要（原文，默认收起）</summary>
+    <p class="note">以下是解卦六步写下的推断原文，保留备查；本页结论以 ① ② 为准。</p>
+    <p>用神二爻卯木于酉月休囚，又被月建酉金冲为月破，兼值旬空，本身无气；所幸日辰亥水生卯、卯长生于亥，为有根之衰。世爻未土休囚受日克，用神克世，用与世直接相接。原神四爻亥水临日辰、酉月为相，旺相有力，本可生用；但用神旬空，空不受生，须待出空。忌神五爻酉金临月建而旺、又明动，虽化申金退神，占近事旺相不退，克用之力仍在。</p>
+  </details>
+</section>
+
+<p class="foot">本页只分析用神及相关爻的力量与条件，不对所问具体事情作结果预言，以免误导。应期只给通道，不给保证。</p>
+</main>
+</body>
+</html>

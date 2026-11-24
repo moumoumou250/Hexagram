@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import os, sys, sqlite3
-HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, os.path.join(HERE, '..', 'verify'))
-from fixtures.book_cases import CASES
-con = sqlite3.connect(':memory:'); con.executescript(open(os.path.join(HERE, '..', 'gua.sql'), encoding='utf-8').read())
+HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, os.path.join(HERE, '..'))
+from tests.fixtures.book_cases import CASES
+con = sqlite3.connect(':memory:'); con.executescript(open(os.path.join(HERE, '..', 'database', 'gua.sql'), encoding='utf-8').read())
 out = []
 for c in CASES:
     mv = '、'.join(map(str, c['mv'])) or '静'

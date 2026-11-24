@@ -1122,7 +1122,7 @@ GROUP BY h.hexagram_id;
 
 -- ======================================================================
 -- 二、动变预计算（v3）：本卦 + 动爻组合 move_mask（0–63，初爻=bit0）→ 变卦与每个动爻的变化。
--- 只收固定部分；化空、化破、日月作用随每次起卦而定，不在此。生成：verify/build_gua_sql.py；核对：verify/oracle_v3.py
+-- 只收固定部分；化空、化破、日月作用随每次起卦而定，不在此。生成：tests/build_gua_sql.py；核对：tests/sql/oracle_v3.py
 -- ======================================================================
 CREATE TABLE hexagram_transition (  -- 动变章第七：动则必变，诸动爻同时变，得一个之卦；move_mask=0 为静卦
     hexagram_id         INTEGER NOT NULL REFERENCES hexagrams(hexagram_id),
