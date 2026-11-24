@@ -2,7 +2,7 @@
 """第一部分（沿用 v1 oracle）：按京房八宫纳甲标准规则重算 64 卦，与 gua.sql 原三表逐字段比对。"""
 import sqlite3, sys, json, os
 HERE = os.path.dirname(os.path.abspath(__file__))
-SQL = os.path.join(HERE, '..', 'gua.sql')
+SQL = os.path.join(HERE, '..', '..', 'gua.sql')
 
 # ---- 1. 执行 SQL 到空库 ----
 con = sqlite3.connect(':memory:')

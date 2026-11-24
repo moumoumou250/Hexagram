@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """v3 规模与性能：gua.sql 大小、建库耗时、库文件大小、按键查询耗时；并跑 PLAN 第 5 节示例查询。"""
 import os, sqlite3, time, tempfile
-HERE = os.path.dirname(os.path.abspath(__file__)); SQL = os.path.join(HERE, '..', 'gua.sql')
+HERE = os.path.dirname(os.path.abspath(__file__)); SQL = os.path.join(HERE, '..', '..', 'gua.sql')
 src = open(SQL, encoding='utf-8').read()
 db = os.path.join(tempfile.mkdtemp(), 'gua.db')
 t = time.time(); con = sqlite3.connect(db); con.executescript(src); con.commit(); t_exec = time.time() - t

@@ -11,17 +11,19 @@ Jingfang v5 是一个用于解读和复核京房纳甲六爻卦例的本地项�
 | 位置 | 用途 |
 | --- | --- |
 | `jingfang/` | 命令行、步骤调度、查表、记录和复核 |
-| `skills/` | 认卦至应期的五份判断规则 |
+| `skills/` | 认卦至应期的五份规则，以及用户版解读的渲染规则 |
 | `gua.sql` | 当前版本的排盘与动变数据 |
-| [templates/hexagram-view.html](templates/hexagram-view.html) | 用户版 HTML 的默认模板 |
-| `reading-logs/` | 每次解卦的 Markdown 记录。用户版 HTML 在 `reading-logs/html/` 内按同名保存 |
-| `reading-logs/rule-versions/` | 每次解卦引用的规则快照，供历史复算 |
+| `templates/` | [用户版 HTML](templates/hexagram-view.html)和[分步复核 HTML](templates/step-dump.html)的模板 |
+| `reading-logs/` | 本地解卦 Markdown、`html/` 导出文件和 `rule-versions/` 规则快照 |
 | [docs/CASES.md](docs/CASES.md) 和 [docs/CHANGES.md](docs/CHANGES.md) | 书例与版本变更 |
+| [docs/plans/](docs/plans/) | 排盘准确性与解读页设计方案 |
 | `docs/verification/` | 验证报告和百例核对表 |
-| `tools/` | 刷新 HTML 模板、生成书例表 |
-| `verify/` | SQL 独立复算、构建、性能检查及验证总入口 |
-| `verify/workflow/`、`verify/cases/` | 单 Agent 流程、百例核对与书例验证 |
+| `tools/` | 生成排盘 SQL、刷新 HTML 模板预览、生成书例表 |
+| `verify/sql/` | SQL 独立复算和性能检查 |
+| `verify/workflow/`、`verify/cases/` | 单 Agent 流程、百例核对、书例验证与规则校准 |
 | `verify/compat/`、`verify/fixtures/` | 跨版本和外部审计工具，以及验证使用的数据 |
+
+`reading-logs/` 在首次解卦时自动创建。这个目录由 Git 忽略。迁移历史卦例时，请一并复制 Markdown 和对应的 `rule-versions/` 快照，供历史复算和重新导出使用。
 
 ## 常用命令
 
@@ -32,11 +34,16 @@ Jingfang v5 是一个用于解读和复核京房纳甲六爻卦例的本地项�
 | 校验历史记录 | `python -X utf8 -m jingfang validate 解卦编号` |
 | 校验并生成本次用户版 HTML | `python -X utf8 -m jingfang export 解卦编号 --html` |
 | 获取已保存的 Markdown 路径 | `python -X utf8 -m jingfang export 解卦编号` |
+| 运行当前项目的回归 | `python -X utf8 verify/run_all.py` |
+| 运行流程回归和百例核对 | `python -X utf8 verify/workflow/journal_check.py` |
+| 独立复算固定盘及动变 | `python -X utf8 verify/sql/oracle_v3.py` |
+| 重建排盘 SQL | `python -X utf8 tools/build_gua_sql.py` |
 | 更新默认 HTML 模板中的单卦预览 | `python -X utf8 tools/build_view.py` |
-| 运行流程回归和百例核对 | `python -X utf8 verify/workflow/blackboard_check.py` |
 | 核对书例 | `python -X utf8 verify/cases/cases_check.py` |
 
 从模板制作用户版 HTML 的步骤见 [交付约定](AGENTS.md)。手工补存中断记录时使用 `python -X utf8 -m jingfang.save_reading_log`。
+
+回归命令按当前仓库的文件运行。需要留档时加 `--report 路径`。手头有历史资料时可加 `--compat`，其中 v2、v4 SQL 和全书审计目录可分别由 `V2_SQL`、`V4_SQL` 和 `AUDIT_DIR` 指定。SQL 性能测量可单独运行 `python -X utf8 verify/sql/perf_size.py`。
 
 ## 解读交付与复核
 
@@ -44,6 +51,5 @@ Jingfang v5 是一个用于解读和复核京房纳甲六爻卦例的本地项�
 2. **浏览器验收**。安装 Node.js 和 `playwright-core` 后，可运行 `node verify/workflow/view_check.cjs "导出的HTML路径" "Chrome可执行文件路径"`，核对问题、本变卦、世应、动爻、主用神和结论。
 3. **区分排盘和判断**。固定盘和动变按本次冻结的 SQL 复算。主用神由解读步骤结合所问选定，导出页面按记录还原其来源和位置。动爻未知时显示待核。
 4. **定位转录错误**。同位变爻地支提交错误时，提示包含爻位、字段、提交值和复算值。先核对原图；若未汇总记录的输入有误，用 `revise` 更正后从认卦重新执行。
-5. **验证排盘**。运行 `python -X utf8 verify/oracle_v3.py` 独立复算 64 卦 × 64 种动爻组合。上表另列百例核对与书例验证命令，用于比对具体案例的动爻、变爻和变卦。
+5. **验证排盘**。独立复算覆盖 64 卦 × 64 种动爻组合。百例核对与书例验证用于比对具体案例的动爻、变爻和变卦。
 6. **区分个案与通用规则**。单次取用和应期判断保存在本次记录。写入通用 Skill 前，说明成立条件和例外，并用条件变化的卦例复核。详见 [个案与通用规则](AGENTS.md#个案与通用规则)。
-"# Hexagram" 

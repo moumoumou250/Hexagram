@@ -1,15 +1,55 @@
 #!/usr/bin/env python3
-"""依次运行全部验证，输出写入 ../docs/verification/VERIFY.txt。"""
-import os, subprocess, sys, datetime
-from zoneinfo import ZoneInfo
-HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..')
-STEPS = ['verify/build_gua_sql.py', 'verify/oracle_v3.py', 'verify/compat/compat_v2.py', 'verify/compat/diff_v4.py', 'verify/cases/cases_check.py', 'verify/compat/audit_regress.py', 'verify/cases/skill_walkthrough.py', 'verify/perf_size.py']
-out = [f"# Jingfang v5 验证输出（v4 + 库内写入乾坤互变卦反吟）  {datetime.datetime.now(ZoneInfo("Asia/Singapore")):%Y-%m-%d %H:%M} (UTC+8)\n"]
-bad = 0
-for s in STEPS:
-    r = subprocess.run([sys.executable, s], cwd=ROOT, capture_output=True, text=True)
-    out.append(f"$ python3 {s}\n{r.stdout}{r.stderr}exit={r.returncode}\n")
-    bad += r.returncode != 0
-out.append(f"ALL STEPS EXIT 0: {'YES' if bad == 0 else 'NO'}\n")
-open(os.path.join(ROOT, 'docs', 'verification', 'VERIFY.txt'), 'w', encoding='utf-8').write('\n'.join(out))
-print('steps failed:', bad); sys.exit(1 if bad else 0)
+"""运行当前项目的回归验证。"""
+
+import argparse
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+CHECKS = (
+    ("tools/build_gua_sql.py", "--check"),
+    ("verify/sql/oracle_v3.py",),
+    ("verify/cases/cases_check.py",),
+    ("verify/cases/skill_walkthrough.py",),
+    ("verify/workflow/journal_check.py",),
+    ("verify/workflow/audit_check.py",),
+    ("verify/workflow/dump_check.py",),
+    ("verify/workflow/forces_unit_check.py",),
+    ("verify/workflow/interpretation_check.py",),
+)
+COMPAT_CHECKS = (
+    ("verify/compat/compat_v2.py",),
+    ("verify/compat/diff_v4.py",),
+    ("verify/compat/audit_regress.py",),
+)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--compat", action="store_true", help="同时执行依赖外部资料的历史版本对照")
+    parser.add_argument("--report", type=Path, help="把验证输出另存为 UTF-8 报告")
+    args = parser.parse_args()
+    checks = CHECKS + COMPAT_CHECKS if args.compat else CHECKS
+    report = []
+    failed = 0
+    for check in checks:
+        heading = f"$ python -X utf8 {' '.join(check)}"
+        print(heading, flush=True)
+        result = subprocess.run(
+            [sys.executable, "-X", "utf8", *check], cwd=ROOT,
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding="utf-8",
+        )
+        output = result.stdout + f"exit={result.returncode}\n"
+        print(output, end="", flush=True)
+        report.append(f"{heading}\n{output}")
+        failed += result.returncode != 0
+    summary = f"验证项 {len(checks)}，失败 {failed}"
+    print(summary)
+    if args.report:
+        args.report.write_text("\n".join([*report, summary]) + "\n", encoding="utf-8")
+    return int(failed > 0)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

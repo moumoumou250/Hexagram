@@ -109,10 +109,6 @@ def reading_page(run, status, sql):
     pending.extend(step["reason"] for step in run["steps"].values()
                    if step["state"] in ("partial", "blocked") and step.get("reason"))
     verdict = run.get("verdict") or {}
-    actions = []
-    for layer in verdict.get("layers") or ():
-        if layer.get("status") == "waiting":
-            actions.append(f"等候「{layer['name']}」：{layer.get('condition', '')}")
     interpretation = build_interpretation(run, evidence)
     reading = {
         "id": str(boards[0]["hexagram_id"]) if verified else "",
@@ -129,7 +125,6 @@ def reading_page(run, status, sql):
                             and e["topic"] in ("comparison", "conclusion")) or "尚无汇总结论。",
         "notes": [{"step": e["step"], "text": e["summary"]} for e in judgments
                   if e["step"] in ("focus", "change", "strength", "timing")],
-        "actions": actions,
         "disclaimer": DISCLAIMER,
         "falsifier": verdict.get("falsifier") or "",
         "interpretation": interpretation,

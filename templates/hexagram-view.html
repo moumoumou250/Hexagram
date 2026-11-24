@@ -61,16 +61,51 @@ th{background:#edf0e7;color:#41564b;font-weight:bold;font-size:13px}
 .chart-table tr:is(.role-shi,.role-ying) > :first-child{box-shadow:inset 3px 0 var(--role-ink);color:var(--role-ink)}
 .chart-table tr.moving:is(.role-shi,.role-ying) .changed-line{background:#fbefe6}
 .analysis{margin-top:16px}
-.summary{background:#e9eee4;border-left:3px solid #416955;padding:11px 14px;border-radius:0 7px 7px 0}
+.summary{background:#e9eee4;border-left:4px solid #416955;padding:13px 16px;border-radius:0 9px 9px 0}
+.summary h4{margin:0 0 4px;color:#365548;font-size:13px}
+.summary p{font-size:clamp(16px,2.4vw,21px);font-weight:700;line-height:1.5}
 .reason{min-width:0;padding:14px 16px;border:1px solid var(--line);border-radius:9px}
 .reason h3{font-size:19px;margin-bottom:5px}
 .evidence{white-space:nowrap}
 .evidence td{vertical-align:top}
 .evidence .detail{display:block;color:var(--muted);font-size:12px}
-.interpretation{margin-top:12px}.interp-fixed,.interp-inferred{margin-top:12px}.interp-fixed h4,.interp-inferred h4{font-size:17px;margin:0 0 6px}.interp-hint{margin:0 0 8px;font-size:12px}.interp-inferred{padding-top:12px;border-top:1px dashed var(--line)}.badge{display:inline-block;margin-left:6px;padding:0 5px;border-radius:4px;background:#f1d8ca;color:#86341f;font-size:11px}
-.interpretation p+p,.interpretation ul{margin-top:6px}
-.interpretation ul{margin-bottom:10px;padding-left:1.3em}
-.source{margin-top:12px;color:var(--muted);font-size:12px}#actions-block{margin-top:12px}#actions-block h4{margin:0 0 6px;font-size:16px}.actions-list{margin:0;padding-left:1.2em}.actions-list li{margin:4px 0}
+.interpretation{margin-top:12px}
+.reading-section{margin-top:18px}
+.reading-section h4{font-size:17px;margin:0 0 8px}
+#key-points-block{border:1px solid #d8e1d5;border-radius:10px}
+.key-points{min-width:680px;font-size:13px;line-height:1.5}
+.key-points thead th{background:#28493d;color:#fffdf7;font-weight:600;white-space:nowrap}
+.key-points th,.key-points td{padding:10px 11px;vertical-align:middle}
+.key-points tbody th{background:var(--card);color:var(--ink);white-space:nowrap}
+.key-points tbody tr:nth-child(even) > *{background:#f7f8f2}
+.key-points tbody tr[data-role="用神"] > *{background:#e9f0e6}
+.key-points tbody tr[data-role="用神"] th{box-shadow:inset 3px 0 #487259}
+.key-points tbody tr:last-child > *{border-bottom:0}
+.key-points .object-name{font-weight:600}
+.key-points .force-status{display:inline-block;border-radius:4px;padding:2px 6px;background:#edf0e9;color:#44564d;font-weight:700}
+.key-points .force-status[data-force="有力"]{background:#dceadf;color:#224e34}
+.key-points .force-status[data-force="无力"],.key-points .force-status[data-limited]{background:#f5ebd8;color:#744823}
+.matrix-scroll-hint{display:none;margin-top:6px}
+@media(max-width:760px){.key-points tr > :first-child{position:sticky;left:0;z-index:1}.key-points tr[data-role="用神"] th{box-shadow:inset 3px 0 #487259,1px 0 #d8e1d5}#key-points-block:not([hidden])+.matrix-scroll-hint{display:block}}
+.basis-list{margin:0;border-top:1px solid var(--line)}
+.basis-list div{display:grid;grid-template-columns:4.5em minmax(0,1fr);gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.basis-list dt{font-weight:700;color:var(--jade)}
+.basis-list dd{margin:0;overflow-wrap:anywhere}
+.compact-list{margin:6px 0 0;padding-inline-start:1.25em}
+.compact-list li+li{margin-top:4px}
+.verdict-layers{display:grid;gap:7px;list-style:none;margin:0;padding:0}
+.verdict-layers li{display:grid;grid-template-columns:4.7em minmax(0,1fr);gap:10px;align-items:start;padding:9px 11px;border:1px solid var(--line);border-radius:7px}
+.layer-status{display:inline-block;padding:1px 5px;border-radius:4px;background:#eeeee7;color:#45574b;text-align:center;font-size:12px;font-weight:700}
+.layer-status.met{background:#dfeee4;color:#22543c}
+.layer-status.waiting{background:#f5ebd6;color:#714b21}
+.layer-status.unlikely{background:var(--rust-bg);color:#86341f}
+.layer-condition{display:block;color:var(--muted);margin-top:2px}
+.falsifier{margin-top:8px;padding:9px 11px;border:1px solid #e8cdbf;border-left:3px solid var(--rust);border-radius:0 7px 7px 0;background:#fbf2ea}
+.falsifier strong{display:block;color:#86341f}
+.review-details,#strength-reading,#summary-pending{margin-top:10px}
+.review-details summary{cursor:pointer;color:var(--jade);font-weight:bold}
+.review-details[open] summary{margin-bottom:8px}
+.source{margin-top:12px;color:var(--muted);font-size:12px}
 [hidden]{display:none!important}
 @media(max-width:760px){main{padding:14px 12px 30px}.hero{padding:18px 15px;gap:10px}.identity{gap:7px}.hero h1,.hero h2{letter-spacing:0;font-size:clamp(17px,4.6vw,29px)}.hero p{font-size:11px}.symbol .bar{width:26px;height:4px}.symbol{gap:4px}.chart-body,.analysis{padding:14px}.reason{padding:10px}.brand{font-size:19px}.jump{font-size:13px;padding:5px 8px}.chart-table th,.chart-table td{padding:7px 5px}.line-name{gap:5px}.line-name .bar{width:24px}.role-badge,.marker{padding-inline:4px}}
 @media print{body{background:white}main{max-width:none;padding:0}.jump{display:none}.panel{break-inside:avoid}.hero{print-color-adjust:exact}}
@@ -105,33 +140,42 @@ th{background:#edf0e7;color:#41564b;font-weight:bold;font-size:13px}
     </article>
     <article class="reason interpretation" aria-labelledby="interpretation-title">
       <h3 id="interpretation-title">解读</h3>
-      <section class="interp-fixed" aria-labelledby="fixed-title">
-        <h4 id="fixed-title">用神盘面要点</h4>
-        <p class="muted interp-hint" id="fixed-hint">先看用神及相关爻上能钉死的内容。本页不解读所问事情会怎样。</p>
-        <ul id="preset-blocks"></ul>
-        <ul id="strength-reading"></ul>
-        <div id="forces-block" hidden>
-          <h4>力度与根基</h4>
-          <ul id="forces-lines"></ul>
-        </div>
-        <div id="windows-block" hidden>
-          <h4>应期通道</h4>
-          <ul id="windows-lines"></ul>
-        </div>
+      <section class="summary" aria-labelledby="inferred-title">
+        <h4 id="inferred-title">一句话核心结论</h4>
+        <p id="summary"></p>
       </section>
-      <section class="interp-inferred" aria-labelledby="inferred-title">
-        <h4 id="inferred-title">用神判断摘要</h4>
-        <p class="muted interp-hint">以下是本次对用神力量与条件的判断，不是对所问事情的结果预言。</p>
-        <ul id="reading-notes" hidden></ul>
-        <p class="summary" id="summary"></p>
-        <div id="verdict-block" hidden>
-          <h4>分层与证伪</h4>
-          <ul id="verdict-layers"></ul>
-          <p id="falsifier-line" class="muted"></p>
+      <p class="muted" id="summary-pending" hidden></p>
+      <section class="reading-section" aria-labelledby="fixed-title">
+        <h4 id="fixed-title">用神与世应</h4>
+        <div class="scroll" id="key-points-block" tabindex="0" role="region" aria-labelledby="fixed-title" hidden>
+          <table class="key-points" id="key-points" aria-labelledby="fixed-title">
+            <thead><tr><th scope="col">判断项目</th><th scope="col">对象</th><th scope="col">月建影响</th><th scope="col">日辰影响</th><th scope="col">当前状态</th><th scope="col">力度评估</th></tr></thead>
+            <tbody></tbody>
+          </table>
         </div>
-        <div id="actions-block" hidden>
-          <h4>行动与等候</h4>
-          <ul class="actions-list" id="actions"></ul>
+        <p class="muted matrix-scroll-hint">左右滑动可查看完整表格。</p>
+        <p class="muted" id="strength-reading" hidden></p>
+      </section>
+      <section class="reading-section" id="basis-block" aria-labelledby="basis-title" hidden>
+        <h4 id="basis-title">关键判断依据</h4>
+        <dl class="basis-list" id="basis-list"></dl>
+        <details class="review-details" id="review-details" hidden>
+          <summary>查看详细判断</summary>
+          <p id="summary-detail" hidden></p>
+          <ul class="compact-list" id="reading-notes" hidden></ul>
+        </details>
+      </section>
+      <section class="reading-section" id="windows-block" aria-labelledby="windows-title" hidden>
+        <h4 id="windows-title">应期通道</h4>
+        <p class="muted">以下均为候选通道。</p>
+        <ul class="compact-list" id="windows-lines"></ul>
+      </section>
+      <section class="reading-section" id="verdict-block" aria-labelledby="verdict-title" hidden>
+        <h4 id="verdict-title">分层与证伪</h4>
+        <ul class="verdict-layers" id="verdict-layers"></ul>
+        <div class="falsifier" id="falsifier-block" hidden>
+          <strong>证伪条件</strong>
+          <p id="falsifier-line"></p>
         </div>
       </section>
     </article>
@@ -220,21 +264,6 @@ function strengthValues(line, dayBranch, voidBranches) {
     voidBranches ? (voidBranches.includes(line.branch) ? "空" : "—") : "待核"];
 }
 
-function describeStrength(line, names, [state, monthEffect, dayEffect, kong]) {
-  const facts = [state !== "—" && `月令${state}`, monthEffect !== "—" && `月建关系为${monthEffect}`,
-    dayEffect !== "—" && `日辰关系为${dayEffect}`, kong === "空" && "逢旬空"].filter(Boolean);
-  const monthlyBreak = monthEffect.includes("月破");
-  const dailyClash = dayEffect.includes("日冲");
-  const monthSupports = !monthlyBreak && /^(临月建|生爻|比和)/.test(monthEffect);
-  const daySupports = !dailyClash && /^(临日辰|生爻|比和)/.test(dayEffect);
-  const reading = monthlyBreak && dayEffect.startsWith("临日辰") ? "临日可解月破。"
-    : dailyClash || kong === "空" ? "还需结合旺衰与动静判断爻力。"
-    : monthSupports && daySupports ? "月日均有扶助。"
-    : (monthSupports && dayEffect.startsWith("克爻")) || (daySupports && (monthlyBreak || monthEffect.startsWith("克爻")))
-      ? "日月作用方向相反，需合看。" : "";
-  return `${focusName(line)}（${names.join("、")}）${facts.length ? "，" + facts.join("，") : ""}。${reading}`;
-}
-
 function renderList(id, texts) {
   const list = byId(id);
   list.replaceChildren(...texts.map(text => {
@@ -250,8 +279,7 @@ function renderStrength(chart, candidates, selected) {
   if (!chart) {
     body.innerHTML = Array.from({length: 6}, (_, index) => `<tr data-position="${6 - index}">
       <td>${label(6 - index)} · 待核</td>${"<td>—</td>".repeat(5)}</tr>`).join("");
-    renderList("strength-reading", ["盘面待核，待确认六爻纳甲后再判断日月与旺衰。"]);
-    return;
+    return ["六爻纳甲待核"];
   }
 
   const rows = chart.lines.map(line => [{line, names: []}]);
@@ -282,7 +310,7 @@ function renderStrength(chart, candidates, selected) {
         const hidden = chart.lines.find(line => line.hidden_relative === relative);
         if (hidden) addRole(name, {position: hidden.position, source: "伏神", stem: hidden.hidden_stem,
           branch: hidden.hidden_branch, element: hidden.hidden_element, relative});
-        else missing.push(`${name}${relative}本卦未现。`);
+        else if (name !== "仇神") missing.push(`${name}${relative}本卦未现`);
       }
     }
   }
@@ -302,19 +330,183 @@ function renderStrength(chart, candidates, selected) {
     return `<tr data-position="${group[0].line.position}">${cells.join("")}</tr>`;
   }).join("");
 
-  const points = [];
-  if (reading.month || dayBranch) {
-    for (const {line, names, values} of ordered.flat()) {
-      const keyRoles = names.filter(name => ["世爻", "应爻", "主用神", "用神候选"].includes(name));
-      if (keyRoles.length) points.push(describeStrength(line, keyRoles, values));
+  return [!reading.month && "月建待核", !dayBranch && "日辰待核", !voidBranches && "旬空待核", ...missing].filter(Boolean);
+}
+
+function renderKeyPoints(selected, conclusions, gaps) {
+  const results = [];
+  const forces = reading.month && reading.day ? conclusions.forces_lines || [] : [];
+  const voids = data.day ? [data.day.kong_1, data.day.kong_2] : [];
+  const dayBranch = data.day?.branch || reading.dayBranch;
+  const labels = {用神:"用神", 原神:"原神生用", 忌神:"忌神克用", 世爻:"世爻", 应爻:"应爻"};
+
+  function influence(branch, period, line, reasons) {
+    if (!branch) return "待核";
+    const hit = data.interactions[branch + line.branch];
+    if (!hit) return "待核";
+    const monthly = period === "月";
+    const relation = {生:"生扶", 克:"克制", 被生:"受爻所生", 被克:"不生扶（受爻所克）", 比和:"比和"};
+    const direction = hit.same_branch ? "临爻" : relation[hit.wuxing];
+    const clash = hit.chong && (monthly ? "月破" : reasons.includes("日破") ? "日冲（日破）" : "日冲");
+    const state = monthly && data.strength?.[line.element];
+    const stage = hit.target_stage === "墓" ? reasons.includes("入墓") ? "入墓" : "见墓" : hit.target_stage;
+    const effects = [clash, direction, hit.he && "相合", stage, state].filter(Boolean);
+    return effects.length ? `${branch}${period} · ${effects.join(" · ")}` : `${branch}${period} · 待核`;
+  }
+
+  function addForce(role, line, force) {
+    const reasons = force?.reasons || [];
+    const root = role === "用神" && forces.length && conclusions.primary_rooted;
+    const moving = !line.source && Boolean(data.moving[line.position]);
+    const state = [moving && "明动", voids.includes(line.branch) && !reasons.includes("真空") && "旬空",
+      ...reasons.filter(reason => !["动", "非动", "无明显旺衰偏倚"].includes(reason)), root].filter(Boolean);
+    if (!state.length && !line.source && reading.mask != null) state.push("静爻");
+    const forceLevel = force?.force;
+    const outcomes = {用神:{有力:"自身有力"}, 原神:{有力:"能生扶用神", 无力:"当前不能生"}, 忌神:{有力:"能克制用神", 无力:"当前不能克"}};
+    const limited = forceLevel === "有力" && reasons.includes("月破") && !data.interactions[(dayBranch || "") + line.branch]?.same_branch;
+    const outlook = limited ? "有力，暂受月破" : outcomes[role]?.[forceLevel] || forceLevel || "力度待核";
+    results.push({role, object:focusName(line), month:influence(reading.month, "月", line, reasons),
+      day:influence(dayBranch, "日", line, reasons), state:[...new Set(state)].join(" · ") || "待核",
+      outlook, forceLevel, limited});
+  }
+
+  if (selected) {
+    addForce("用神", selected, forces.find(line => line.role === "用神"));
+    for (const role of ["原神", "忌神"]) {
+      const entries = forces.filter(line => line.role === role);
+      const relative = data.roles?.[role === "原神" ? "yuanshen" : "jishen"];
+      for (const force of entries) {
+        addForce(role, data.base.lines[force.position - 1], force);
+      }
+      if (!entries.length) {
+        const knownLines = relative ? data.base.lines.filter(line => line.relative === relative) : [];
+        const hiddenLine = relative && data.base.lines.find(line => line.hidden_relative === relative);
+        if (knownLines.length) knownLines.forEach(line => addForce(role, line));
+        else if (hiddenLine) addForce(role, focusLine({source:"hidden", position:hiddenLine.position,
+          branch:hiddenLine.hidden_branch, element:hiddenLine.hidden_element}));
+        else results.push({role, object:relative || "待核", month:"—", day:"—",
+          state:relative ? "本卦未见" : "待核", outlook:"作用待核"});
+      }
     }
   }
-  const gaps = [!reading.month && "月令与月建待核", !dayBranch && "日辰待核", !voidBranches && "旬空待核"].filter(Boolean);
-  if (gaps.length) points.push(`${gaps.join("、")}。`);
-  for (const {line, names} of extras) {
-    points.push(describeStrength(line, names, strengthValues(line, dayBranch, voidBranches)));
+  if (data.base) {
+    for (const [role, position] of [["世爻", data.base.shi_line], ["应爻", data.base.ying_line]]) {
+      addForce(role, data.base.lines[position - 1], forces.find(line => line.position === position));
+    }
   }
-  renderList("strength-reading", [...points, ...missing]);
+
+  const body = byId("key-points").tBodies[0];
+  for (const {role, object, month, day, state, outlook, forceLevel, limited} of results) {
+    const row = body.insertRow();
+    row.dataset.role = role;
+    const heading = document.createElement("th");
+    heading.scope = "row";
+    heading.textContent = labels[role];
+    row.append(heading);
+    row.insertCell().textContent = object;
+    row.cells[1].className = "object-name";
+    for (const value of [month, day, state]) row.insertCell().textContent = value;
+    const badge = document.createElement("span");
+    badge.className = "force-status";
+    if (forceLevel) badge.dataset.force = forceLevel;
+    badge.toggleAttribute("data-limited", Boolean(limited));
+    badge.textContent = outlook;
+    row.insertCell().append(badge);
+  }
+  byId("key-points-block").hidden = !results.length;
+  const pending = [...gaps];
+  if (!selected && data.base) pending.push("主用神待定");
+  byId("strength-reading").textContent = pending.length ? pending.join("、") + "。" : "";
+  byId("strength-reading").hidden = !pending.length;
+  return results;
+}
+
+function describeChange(selected, move) {
+  if (!move) {
+    return reading.mask === 0 ? "本卦无明动爻，按静卦看。"
+      : reading.mask == null ? "动爻待核。" : "用神无同位动变记录，结合相关动爻判断。";
+  }
+  const voids = data.day ? [data.day.kong_1, data.day.kong_2] : [];
+  const target = move.changed_branch + move.changed_element;
+  const effect = {
+    "动生变": `${selected.branch}${selected.element}生${target}，用神耗力`,
+    "动克变": `用神克变爻${target}`,
+    "回头生": `变爻${target}反过来生用神`,
+    "回头克": `变爻${target}反过来克用神`,
+    "比和": "用神与变爻同五行",
+  }[move.huitou];
+  return [`${selected.branch}${selected.element} → ${target}（${move.changed_relative}）`, effect,
+    move.hua_he && "同位变爻相合", move.hua_chong && "同位变爻相冲", move.jin_tui && `化${move.jin_tui}`,
+    move.hua_stage && `化${move.hua_stage}`, voids.includes(move.changed_branch) && "化旬空"].filter(Boolean).join(" · ");
+}
+
+function renderBasis(selected, points, interp) {
+  const rows = [];
+  if (selected) {
+    const {branch, element} = selected;
+    const dayBranch = data.day?.branch || reading.dayBranch;
+    const [monthly, monthEffect, dayEffect, kong] = strengthValues(selected, dayBranch,
+      data.day && [data.day.kong_1, data.day.kong_2]);
+    const related = points.filter(({role}) => role === "原神" || role === "忌神");
+    const relatedText = related.map(({role, object, outlook}) => `${role}${object}，${outlook}`);
+    rows.push(
+      ["月建", reading.month ? `${reading.month}月 · 用神${branch}${element}月令${monthly} · ${monthEffect}` : "月建待核。"],
+      ["日辰", dayBranch ? `${reading.day || dayBranch}日 · 用神${branch}${element} · ${dayEffect}` : "日辰待核。"],
+      ["旬空", data.day ? `${data.day.kong_1}、${data.day.kong_2}空 · 用神${branch}${kong === "空" ? "逢空" : "不空"}` : "旬空待核。"],
+      ["动变", describeChange(selected, interp.conclusions?.primary_change)],
+      ["原忌神", relatedText.join("；") || "原神、忌神的作用待核。"],
+    );
+  }
+  const list = byId("basis-list");
+  for (const [name, value] of rows) {
+    const row = document.createElement("div");
+    const title = document.createElement("dt");
+    const detail = document.createElement("dd");
+    title.textContent = name;
+    detail.textContent = value;
+    row.append(title, detail);
+    list.append(row);
+  }
+  list.hidden = !rows.length;
+
+  const notes = (reading.notes || []).map(note => note.text);
+  notes.push(...(interp.preset_blocks || [])
+    .filter(block => !block.derived && !["X01", "X02"].includes(block.id))
+    .map(block => block.text));
+  renderList("reading-notes", notes);
+  const hasLongSummary = reading.summary !== byId("summary").textContent;
+  byId("summary-detail").textContent = hasLongSummary ? reading.summary : "";
+  byId("summary-detail").hidden = !hasLongSummary;
+  const hasDetails = notes.length > 0 || hasLongSummary;
+  byId("review-details").hidden = !hasDetails;
+  byId("basis-block").hidden = !rows.length && !hasDetails;
+}
+
+function renderVerdict(conclusions) {
+  const layers = conclusions.verdict_layers || reading.verdict_layers || [];
+  const list = byId("verdict-layers");
+  for (const layer of layers) {
+    const item = document.createElement("li");
+    const status = document.createElement("strong");
+    const state = {"已备":"met", "已具备":"met", "待时":"waiting", "难成":"unlikely"}[layer.status];
+    status.className = "layer-status";
+    if (state) status.classList.add(state);
+    status.textContent = state === "met" ? "已具备" : layer.status || "待核";
+    const content = document.createElement("div");
+    const name = document.createElement("strong");
+    name.textContent = layer.name;
+    const condition = document.createElement("span");
+    condition.className = "layer-condition";
+    condition.textContent = layer.condition || "";
+    content.append(name, condition);
+    item.append(status, content);
+    list.append(item);
+  }
+  list.hidden = !layers.length;
+  const falsifier = conclusions.falsifier || reading.falsifier || "";
+  byId("falsifier-line").textContent = falsifier;
+  byId("falsifier-block").hidden = !falsifier;
+  byId("verdict-block").hidden = !layers.length && !falsifier;
 }
 
 function showReading() {
@@ -337,58 +529,30 @@ function showReading() {
     hero.innerHTML = "<div><h1>盘面待核</h1><p></p></div>";
     hero.querySelector("p").textContent = reading.baseName || "";
   }
-  renderStrength(base, base ? reading.candidates.map(focusLine) : [], selected);
+  const gaps = renderStrength(base, base ? reading.candidates.map(focusLine) : [], selected);
 
   byId("case-label").textContent = reading.label || "本次解读 · " + reading.status;
   byId("source").textContent = reading.source;
   byId("disclaimer").textContent = reading.disclaimer || "";
 
-  // ① 盘面要点（固定）先渲染
   const interp = reading.interpretation || {};
-  const presets = (interp.preset_blocks || []).map(block => {
-    const badge = block.status && block.status !== "fixed"
-      ? (block.status === "contested" ? "【需核对】" : "【结构提示】") : "";
-    const derived = block.derived ? "（按当前配置派生）" : "";
-    return `${block.text || ""}${badge}${derived}`;
-  });
-  renderList("preset-blocks", presets);
+  const conclusions = interp.conclusions || {};
+  const summary = reading.summary.trim();
+  const firstSentence = summary.match(/^[^。！？]+[。！？]/u)?.[0] || summary;
+  byId("summary").textContent = firstSentence;
+  const pending = reading.pending || [];
+  byId("summary-pending").textContent = pending.join(" ");
+  byId("summary-pending").hidden = !pending.length;
+  const points = renderKeyPoints(selected, conclusions, gaps);
+  renderBasis(selected, points, interp);
 
-  const forceLines = [];
-  if (interp.conclusions?.primary_rooted) {
-    const reasons = (interp.conclusions.primary_rooted_reasons || []).join("、");
-    forceLines.push(`用神根基：${interp.conclusions.primary_rooted}${reasons ? "（" + reasons + "）" : ""}`);
-  }
-  for (const line of interp.conclusions?.forces_lines || []) {
-    forceLines.push(`${line.role || ""}第${line.position}爻 ${line.force}。${(line.reasons || []).join("、")}`);
-  }
-  byId("forces-block").hidden = !forceLines.length;
-  renderList("forces-lines", forceLines);
-
-  const windowLines = (interp.conclusions?.windows || []).map(item =>
-    `${item.branch}${item.unit} · ${(item.channels || []).join("、") || "通道待核"} · ${item.confidence || "candidate"}`
+  const windowLines = (conclusions.windows || []).map(item =>
+    `${item.branch}${item.unit} · ${(item.channels || []).join("、") || "通道待核"}${item.confidence === "high" ? "（多条通道吻合）" : ""}`
   );
   byId("windows-block").hidden = !windowLines.length;
   renderList("windows-lines", windowLines);
 
-  // ② 程序推断后渲染
-  byId("summary").textContent = [reading.summary, ...(reading.pending || [])].join(" ");
-  const noteTexts = (reading.notes || [])
-    .filter(note => ["focus", "strength", "change", "timing"].includes(note.step))
-    .map(note => note.text);
-  renderList("reading-notes", noteTexts);
-
-  const layers = interp.conclusions?.verdict_layers || reading.verdict_layers || [];
-  const layerTexts = layers.map(layer =>
-    `${layer.name}：${layer.condition || ""}（${layer.status || ""}）`
-  );
-  const falsifier = interp.conclusions?.falsifier || reading.falsifier || "";
-  byId("verdict-block").hidden = !(layerTexts.length || falsifier);
-  renderList("verdict-layers", layerTexts);
-  byId("falsifier-line").textContent = falsifier ? "证伪条件：" + falsifier : "";
-
-  const actions = [...(reading.actions || [])];
-  byId("actions-block").hidden = !actions.length;
-  renderList("actions", actions);
+  renderVerdict(conclusions);
 }
 
 showReading();

@@ -6,7 +6,7 @@
 
 | 层 | 现状 | 缺口 |
 | --- | --- | --- |
-| 排盘 | `verify/oracle_v3.py` 复算 64×64，`verify/cases` 核对 53 例，百例核对 100 例全过 | 无缺口 |
+| 排盘 | `verify/sql/oracle_v3.py` 复算 64×64，`verify/cases` 核对 53 例，百例核对 100 例全过 | 无缺口 |
 | 规则 | 五份 SKILL 带章节引用，`gua.sql` 冻结快照 | 无缺口 |
 | 判断 | `review.normalize_entries` 校验引用与字段一致性 | 结论是自由文字，**无法核对、无法积累** |
 | 误判 | `review.flagged_items` 只有 5 条提示 | 用神无根、元忌力度、三合虚实、空墓、化空破墓、进退神均无提示 |
@@ -296,7 +296,7 @@ def forces(evidence, focus):
 1. M4 审计模块 + 单测（不改任何提交格式，风险最低，先跑通）
 2. M2 verdict（`review.verdict_choice` + `_apply` + `render`）
 3. M3 outcome 命令 + 第 6 节渲染
-4. 同步 `verify/workflow/blackboard_check.py` 的 `finish()`
+4. 同步 `verify/workflow/journal_check.py` 的 `finish()`
 
 批 1 验收：`verify/run_all.py` 全绿；有状态脚且规则快照齐全的旧记录 `validate`/`export` 通过；新解一卦走完全流程，Markdown 出现分层表，`outcome` 追加后出现第 6 节。
 

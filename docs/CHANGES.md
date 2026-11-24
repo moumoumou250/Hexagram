@@ -132,7 +132,7 @@
   - 无妄固定示例 8 条。
   - 维基录图的差异仍只有卦例 #37，即已确认的录文错。
 - `verify/cases/skill_walkthrough.py`：改按 move_mask 查并做反查核对，输出与 v2 逐行相同。
-- `verify/perf_size.py`：`gua.sql` 1,860,204 字节；在空库执行约 0.5 秒；建成的库 1,773,568 字节；按键查询 0.01 ms 级。
+- `verify/sql/perf_size.py`：`gua.sql` 1,860,204 字节；在空库执行约 0.5 秒；建成的库 1,773,568 字节；按键查询 0.01 ms 级。
 - `verify/run_all.py`：一键重跑以上全部检查，并重写 verification/VERIFY.txt。
 
 ## 四、与方案的出入

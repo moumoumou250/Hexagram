@@ -392,12 +392,18 @@ def build_interpretation(run, evidence):
     else:
         preset = match_presets(evidence, focus, derived=True)
     config = load_config()
+    primary = (focus or {}).get("primary") or {}
+    main_change = _move_at(evidence, primary.get("position")) if primary.get("source") == "base" else None
     return {
         "config_version": config.get("config_version", "1.0"),
         "el15": True,
         "scope": "yongshen_only",
         "preset_blocks": preset,
         "conclusions": {
+            "primary_change": {key: main_change[key] for key in (
+                "changed_branch", "changed_element", "changed_relative", "huitou", "hua_he",
+                "hua_chong", "jin_tui", "hua_stage",
+            )} if main_change else None,
             "primary_rooted": forces_detail.get("primary_rooted"),
             "primary_rooted_reasons": forces_detail.get("primary_rooted_reasons") or [],
             "forces_lines": [
@@ -406,7 +412,9 @@ def build_interpretation(run, evidence):
                     "force": line.get("force"), "reasons": line.get("reasons") or [],
                 }
                 for line in forces_detail.get("lines") or ()
-                if line.get("role") in ("用神", "原神", "忌神", "世")
+                if line.get("role") in ("用神", "原神", "忌神")
+                or line.get("position") in (evidence.get("chart", {}).get("shi_line"),
+                                            evidence.get("chart", {}).get("ying_line"))
             ],
             "windows": [
                 {

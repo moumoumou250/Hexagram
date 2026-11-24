@@ -4,8 +4,8 @@ __pycache__/
 .venv/
 venv/
 
-# 解卦运行时产生的本地状态
-reading-logs/blackboard.sqlite3
+# 本地卦例、导出文件和规则快照
+/reading-logs/
 
 # 编辑器与系统临时文件
 .DS_Store

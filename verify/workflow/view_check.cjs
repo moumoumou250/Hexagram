@@ -31,7 +31,6 @@ async function main() {
         const interpretation = get("interpretation-title");
         equal(Boolean(table.compareDocumentPosition(interpretation) & Node.DOCUMENT_POSITION_FOLLOWING), true, "interpretation follows table");
         equal(interpretation.parentElement.contains(get("summary")), true, "conclusion in interpretation");
-        equal(get("strength-reading").children.length > 0, true, "table-based interpretation");
       }
       function verify() {
         equal(doc.querySelectorAll("form, select, input, button").length, 0, "read-only page");
@@ -39,11 +38,49 @@ async function main() {
         equal(get("month").textContent, reading.month ? reading.month + "月" : "待核", "month");
         equal(get("day").textContent, reading.day ? reading.day + "日" :
           reading.dayBranch ? reading.dayBranch + "日（天干待核）" : "待核", "day");
-        equal(get("summary").textContent.startsWith(reading.summary), true, "conclusion");
+        equal(reading.summary.trim().startsWith(get("summary").textContent), true, "core conclusion from saved summary");
+        if (get("summary").textContent !== reading.summary) {
+          equal(get("summary-detail").textContent, reading.summary, "complete summary retained");
+        }
         for (const id of ["roles", "facts", "focus", "changes"]) equal(get(id), null, id);
         verifyStrength();
-        equal(get("reading-notes").children.length,
-          reading.notes.filter(note => ["strength", "timing"].includes(note.step)).length, "saved interpretation notes");
+        const savedNotes = [...get("reading-notes").children].slice(0, reading.notes.length);
+        equal(JSON.stringify(savedNotes.map(note => note.textContent)),
+          JSON.stringify(reading.notes.map(note => note.text)), "saved interpretation notes");
+        equal(get("review-details").open, false, "review details collapsed by default");
+        equal(get("interpretation-title").parentElement.innerText.includes("按当前配置派生"),
+          false, "no repeated provenance labels");
+        const points = [...get("key-points").tBodies[0].rows];
+        const pointRoles = [...new Set(points.map(row => row.cells[0].textContent))].join("、");
+        equal(get("key-points-block").hidden, !reading.id, "key points wait for the board");
+        equal([...get("key-points").tHead.rows[0].cells].map(cell => cell.textContent).join("、"),
+          "判断项目、对象、月建影响、日辰影响、当前状态、力度评估", "key point columns");
+        equal(points.every(row => row.cells.length === 6 && row.cells[5].querySelector(".force-status")),
+          true, "key point cells and force badge");
+        equal(pointRoles, reading.primary ? "用神、原神生用、忌神克用、世爻、应爻"
+          : reading.id ? "世爻、应爻" : "", "key point order");
+        if (reading.primary) {
+          equal(points[0].cells[1].textContent, get("primary").textContent, "focus identity in key points");
+          equal([...get("basis-list").querySelectorAll("dt")].map(term => term.textContent).join("、"),
+            "月建、日辰、旬空、动变、原忌神", "evidence order");
+        }
+        for (const [before, after] of [["inferred-title", "fixed-title"], ["fixed-title", "basis-title"],
+          ["basis-title", "windows-title"], ["windows-title", "verdict-title"]]) {
+          equal(Boolean(get(before).compareDocumentPosition(get(after)) & Node.DOCUMENT_POSITION_FOLLOWING),
+            true, `${before} precedes ${after}`);
+        }
+        const conclusions = reading.interpretation?.conclusions || {};
+        if (conclusions.windows?.length) {
+          equal(get("windows-block").innerText.includes("候选通道"), true, "candidate timing notice");
+          equal(get("windows-lines").children.length, conclusions.windows.length, "timing list");
+        }
+        for (const [index, layer] of (conclusions.verdict_layers || []).entries()) {
+          const item = get("verdict-layers").children[index];
+          equal(item.querySelector(".layer-status").textContent, layer.status === "已备" ? "已具备" : layer.status, "layer status");
+          equal(item.querySelector(".layer-condition").textContent, layer.condition, "layer condition");
+        }
+        if (conclusions.falsifier) equal(get("falsifier-line").textContent, conclusions.falsifier, "falsifier retained");
+        if (reading.disclaimer) equal(get("disclaimer").textContent, reading.disclaimer, "scope disclaimer");
         if (!reading.id) {
           equal(get("hero").querySelector("h1").textContent, "盘面待核", "pending chart");
           equal(get("board").rows.length, 0, "pending rows");
